@@ -43,9 +43,7 @@ if (user.value) {
       avatar_path.value = data.value.avatar_url
     }
   } catch (error) {
-    if (error instanceof Error) {
-      alert(error.message);
-    }
+    throw error;
   }
 }
 

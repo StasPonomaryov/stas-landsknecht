@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-const supabase = useSupabaseClient();
+const { auth } = useSupabaseClient();
 const user = useSupabaseUser();
 import { getUsername } from '~/utils';
 const displayName = ref('');
