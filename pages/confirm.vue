@@ -5,10 +5,14 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from '#imports';
+const store = useUserStore();
 const user = useSupabaseUser();
 
 watch(user, () => {
-  if (user.value) {
+  if (user.value) {        
+    store.setUser(user.value);
+
     return navigateTo('/stats');
   }
 }, { immediate: true });
