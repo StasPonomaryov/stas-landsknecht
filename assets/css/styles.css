@@ -1,0 +1,310 @@
+/* RESET */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+#root,
+#__next {
+  isolation: isolate;
+}
+
+/* STYLES */
+:root {
+  --main-bg-color: #f5f5f5;
+  --main-text-color: #565656;
+  --primary-color: #50c878;
+  --accent-color: #388c68;
+  --divider-color: 217, 217, 217;
+  --error-color: 204, 0, 0;
+  --valid-color: 80, 200, 120;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --main-bg-color: #3a404d;
+    --main-text-color: #f5f5f5;
+    --primary-color: #50c878;
+    --accent-color: #388c68;
+    --divider-color: 46, 48, 54;
+  }
+}
+
+html,
+body,
+#__nuxt {
+  height: 100%;
+}
+
+body {
+  background-color: var(--main-bg-color);
+  color: var(--main-text-color);
+  font-family: 'Reddit Mono', monospace;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+h2 {
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--primary-color);
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  white-space: nowrap;
+}
+
+input:disabled {
+  opacity: 0.5;
+}
+
+.btn {
+  border-radius: 6px;
+  border-width: 1px;
+  padding: 0.5rem 1rem;
+}
+
+.btn.btn-sm {
+  padding: 1rem 1.5rem;
+}
+
+.btn.btn-primary {
+  /* background: linear-gradient(var(--primary-color), var(--accent-color));
+  border-color: transparent;
+  box-shadow: inset 0px 0px 14px -3px var(--primary-color); */
+  background-color: var(--primary-color);
+  border-color: transparent;
+  color: #fff;
+  /* text-shadow: 0px -1px var(--accent-color); */
+}
+
+.btn.btn-primary:hover {
+  background: none var(--accent-color);
+  cursor: pointer;
+}
+
+.link {
+  cursor: pointer;
+}
+
+.input-area {
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.input-label {
+  color: var(--main-text-color);
+  display: block;
+  font-size: 14px;
+  margin-bottom: 0.5rem;
+}
+
+.input-text,
+.textarea {
+  background-color: rgb(var(--divider-color));
+  border: 1px solid var(--divider-color);
+  border-radius: 6px;
+  color: var(--main-text-color);
+  padding: 0.4rem 0.8rem;
+}
+
+.input-error {
+  background-color: rgba(var(--error-color), 0.25);
+}
+
+.input-valid {
+  background-color: rgba(var(--valid-color), 0.25);
+}
+
+.small {
+  font-size: 14px;
+}
+
+.error-text,
+.required {
+  color: rgb(var(--error-color));
+  font-size: 0.75rem;
+}
+
+.success-text {
+  color: var(--primary-color);
+  font-size: 0.75rem;
+}
+
+.mr-2 {
+  margin-right: 1rem;
+}
+
+.ml-2 {
+  margin-left: 1rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.5rem;
+}
+
+.grid.cards {
+  align-items: start;
+  display: grid;  
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.text-center {
+  text-align: center;
+}
+
+.site-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+}
+
+.site-header {
+  background-color: var(--primary-color);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.site-header a,
+.site-header a:focus,
+.site-header a:visited {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+.site-header a:hover {
+  text-decoration: none;
+}
+
+.site-header .logo {
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0px -1px var(--accent-color);
+}
+
+.content-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+#menuToggler {
+  cursor: pointer;
+}
+
+.site-sidebar {
+  background-color: rgba(var(--divider-color));
+  transition: width 500ms ease;
+  width: clamp(180px, 200px, 15vw);
+}
+
+.site-sidebar.collapsed {
+  width: clamp(42px, 48px, 5vw);
+}
+
+.site-sidebar.collapsed + .site-content {
+  width: clamp(100% - 42px, 100% - 48px, 95vw);
+}
+
+.site-sidebar .sidebar-control {
+  display: flex;
+  justify-content: end;
+  padding: 1rem;
+}
+
+.site-sidebar .sidebar-control i {
+  cursor: pointer;
+}
+
+.site-sidebar .sidebar-content {
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.site-sidebar.collapsed .sidebar-content {
+  margin-left: -100vw;
+}
+
+.sidebar-content li {
+  padding: 1rem 0 0 0;
+}
+
+.sidebar-content li a {
+  color: var(--main-text-color);
+  font-weight: bold;
+  padding: 0 0 1rem 0;
+  text-decoration: none;
+}
+
+.sidebar-content li ul {
+  padding-left: 1.5rem;
+}
+
+.sidebar-content li ul li a {
+  font-weight: normal;
+  font-size: smaller;
+}
+
+.site-content {
+  width: clamp(100% - 180px, 100% - 200px, 85vw);
+}
+
+.site-content .content-control {
+  padding: 0.5rem 1rem;
+}
+
+.site-footer {
+  display: flex;
+  font-size: smaller;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+}
+
+.narrow-centered {
+  margin: auto;
+  width: clamp(200px, 25vw, 50vw);
+}
+
