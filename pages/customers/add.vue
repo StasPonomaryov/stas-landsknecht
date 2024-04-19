@@ -1,38 +1,40 @@
 <template>
-  <section v-if="user" class="grid cards customers">
-    <div class="customers-control">
-      <h2>Add a customer</h2>
-      <form class="form-widget" @submit.prevent="saveCustomer">
-        <div class="input-area">
-          <label for="customerName" class="input-label">
-            Name <span class="required">*</span>
-          </label>
-          <input class="input-text" name="customerName" placeholder="e.g. John" type="text" @change="v$.name.$touch"
-            :class="{
-              'input-error': v$.name.$error,
-              'input-valid': !v$.name.$invalid
-            }" v-model="formData.name" />
-        </div>
-        <div class="input-area">
-          <label for="customerDescription" class="input-label">
-            Description
-          </label>
-          <input class="input-text" name="customerDescription" placeholder="e.g. annoying uncle" type="text"
-            @change="v$.description.$touch" :class="{ 'input-error': v$.description.$error }"
-            v-model="formData.description" />
-        </div>
-        <div class="input-area">
-          <label for="customerContacts" class="input-label">
-            Contacts <span class="required">*</span>
-          </label>
-          <textarea class="textarea" name="customerContacts" v-model="formData.contacts" @change="v$.contacts.$touch"
-            :class="{ 'input-error': v$.contacts.$error }">{{ formData.contacts }}</textarea>
-        </div>
-        <div v-if="succeed" class="success-text mb-1">Saved {{ addedCustomer }}</div>
-        <div class="input-area">
-          <input type="submit" class="btn btn-primary" :value="loading ? '💤' : '➕Add'" :disabled="loading" />
-        </div>
-      </form>
+  <section v-if="user" class="customers">
+    <h2>Add a customer</h2>
+    <div class="grid cards">
+      <div class="customers-control">
+        <form class="form-widget" @submit.prevent="saveCustomer">
+          <div class="input-area">
+            <label for="customerName" class="input-label">
+              Name <span class="required">*</span>
+            </label>
+            <input class="input-text" name="customerName" placeholder="e.g. John" type="text" @change="v$.name.$touch"
+              :class="{
+                'input-error': v$.name.$error,
+                'input-valid': !v$.name.$invalid
+              }" v-model="formData.name" />
+          </div>
+          <div class="input-area">
+            <label for="customerDescription" class="input-label">
+              Description
+            </label>
+            <input class="input-text" name="customerDescription" placeholder="e.g. annoying uncle" type="text"
+              @change="v$.description.$touch" :class="{ 'input-error': v$.description.$error }"
+              v-model="formData.description" />
+          </div>
+          <div class="input-area">
+            <label for="customerContacts" class="input-label">
+              Contacts <span class="required">*</span>
+            </label>
+            <textarea class="textarea" name="customerContacts" v-model="formData.contacts" @change="v$.contacts.$touch"
+              :class="{ 'input-error': v$.contacts.$error }">{{ formData.contacts }}</textarea>
+          </div>
+          <div v-if="succeed" class="success-text mb-1">Saved {{ addedCustomer }}</div>
+          <div class="input-area">
+            <input type="submit" class="btn btn-primary" :value="loading ? '💤' : '➕Add'" :disabled="loading" />
+          </div>
+        </form>
+      </div>
     </div>
   </section>
 </template>
@@ -73,15 +75,15 @@ async function saveCustomer() {
   v$.value.$validate();
   if (!v$.value.$error) {
     loading.value = true;
-    const { data: newCustomer } = await useFetch('/api/customers/add', 
-    {
-      method: 'POST',
-      body: {
-        name: formData.name,
-        description: formData.description,
-        contacts: formData.contacts
-      }
-    });
+    const { data: newCustomer } = await useFetch('/api/customers/add',
+      {
+        method: 'POST',
+        body: {
+          name: formData.name,
+          description: formData.description,
+          contacts: formData.contacts
+        }
+      });
     if (newCustomer.value) {
       addedCustomer.value = newCustomer.value.name;
       succeed.value = true;
@@ -100,10 +102,6 @@ useHead({
 </script>
 
 <style scoped>
-.customers-control {
-  max-width: 300px;
-}
-
 .input-text,
 .textarea {
   width: calc(300px - 1rem);

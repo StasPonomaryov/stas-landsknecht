@@ -14,7 +14,7 @@ import { useUserStore } from '#imports';
 const store = useUserStore();
 const { customersCount, customers } = storeToRefs(store);
 
-if (!customers.value.length) {
+if (!customers.value?.length) {
   try {
     const { data: count } = await useFetch(`/api/customers/get/?q=count`);
     if (count) {

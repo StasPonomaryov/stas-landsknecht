@@ -82,10 +82,6 @@ useHead({
 </script>
 
 <style>
-.account-control {
-  max-width: 300px;
-}
-
 .input-text {
   width: calc(300px - 1rem);
 }
