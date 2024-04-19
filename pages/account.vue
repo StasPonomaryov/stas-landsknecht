@@ -1,25 +1,27 @@
 <template>
-  <section class="grid cards account">
-    <div class="account-control">
-      <h2>Your account</h2>
-      <form class="form-widget" @submit.prevent="updateProfile">
-        <div class="input-area">
-          <label for="email" class="input-label">Email</label>
-          <input class="input-text" id="email" type="text" :value="user?.email" disabled />
-        </div>
-        <div class="input-area">
-          <label for="username" class="input-label">Username</label>
-          <input class="input-text" id="username" type="text" v-model="username" />
-        </div>
-        <div class="input-area">
-          <label for="website" class="input-label">Website</label>
-          <input class="input-text" id="website" type="url" v-model="website" />
-        </div>
-        <div v-if="succeed" class="success-text mb-1">Updated {{ username }}</div>
-        <div class="input-area">
-          <input type="submit" class="btn btn-primary" :value="loading ? '💤' : '✅Update'" :disabled="loading" />
-        </div>
-      </form>
+  <section class="account">
+    <h2>Your account</h2>
+    <div class="grid cards">
+      <div class="account-control">
+        <form class="form-widget" @submit.prevent="updateProfile">
+          <div class="input-area">
+            <label for="email" class="input-label">Email</label>
+            <input class="input-text" id="email" type="text" :value="user?.email" disabled />
+          </div>
+          <div class="input-area">
+            <label for="username" class="input-label">Username</label>
+            <input class="input-text" id="username" type="text" v-model="username" />
+          </div>
+          <div class="input-area">
+            <label for="website" class="input-label">Website</label>
+            <input class="input-text" id="website" type="url" v-model="website" />
+          </div>
+          <div v-if="succeed" class="success-text mb-1">Updated {{ username }}</div>
+          <div class="input-area">
+            <input type="submit" class="btn btn-primary" :value="loading ? '💤' : '✅Update'" :disabled="loading" />
+          </div>
+        </form>
+      </div>
     </div>
   </section>
 </template>
@@ -73,6 +75,10 @@ async function updateProfile() {
     loading.value = false
   }
 }
+
+useHead({
+  title: 'Account - Landsknecht'
+});
 </script>
 
 <style>
