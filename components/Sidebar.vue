@@ -28,7 +28,7 @@
               <NuxtLink to="/customers/add">Add customer</NuxtLink>
             </li>
             <li>
-              <a href="#">Edit customer</a>
+              <NuxtLink to="/customers/edit">Edit customer</NuxtLink>
             </li>
             <li>
               <a href="#">Remove customer</a>
