@@ -4,7 +4,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/supabase',
     'nuxt-security',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@vueform/nuxt'
   ],
   supabase: {
     redirectOptions: {
@@ -33,9 +34,4 @@ export default defineNuxtConfig({
       baseUrl: process.env.BASE_URL || 'http://localhost:5000'
     }
   },
-  // typescript: {
-  //   tsConfig: {
-  //     "extends": "../../../tsconfig.base.json"
-  //   }
-  // },
 })
