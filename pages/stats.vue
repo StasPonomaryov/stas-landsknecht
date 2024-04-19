@@ -1,16 +1,20 @@
 <template>
-  <section class="grid cards stats">
+  <section class="stats">
     <h2>Statistics</h2>
-    Customers: {{ customersCount }}
+    <div class="grid cards">
+      <div class="customers">
+        Customers: {{ customersCount }}
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup>
 import { useUserStore } from '#imports';
 const store = useUserStore();
-const { customersCount, isLoggedIn, user } = storeToRefs(store);
+const { customersCount, customers } = storeToRefs(store);
 
-if (isLoggedIn.value) {
+if (!customers.value.length) {
   try {
     const { data: count } = await useFetch(`/api/customers/get/?q=count`);
     if (count) {
@@ -20,11 +24,10 @@ if (isLoggedIn.value) {
     throw e;
   }
 }
+
 useHead({
   title: 'Stats - Landsknecht'
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

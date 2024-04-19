@@ -1,6 +1,8 @@
 <template>
   <header class="site-header">
-    <div class="logo">Landsknecht 🏰</div>
+    <div class="logo">
+      <NuxtLink to="/stats">Landsknecht 🏰</NuxtLink>
+    </div>
     <div v-if="user" class="user">
       Salut,
       <NuxtLink to="/account"><b>{{ displayName }}</b></NuxtLink>
@@ -10,31 +12,17 @@
 </template>
 
 <script setup>
-const { auth } = useSupabaseClient();
+import { useUserStore } from '#imports';
 const user = useSupabaseUser();
-import { getUsername } from '~/utils';
-const displayName = ref('');
+const { auth } = useSupabaseClient();
+const store = useUserStore();
+const { displayName } = storeToRefs(store);
 
 const userLogout = async () => {
   await auth.signOut();
   navigateTo('/');
 }
-
-if (user) {
-  if (user.value.username) {
-    displayName.value = user.value.username
-  }
-}
-
-watchEffect(() => {
-  if (!displayName.value.length) {
-    displayName.value = getUsername(user.value.email);
-  }
-});
 </script>
 
 <style scoped>
-.user a {
-  color: #fff;
-}
 </style>
