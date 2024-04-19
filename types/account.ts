@@ -5,4 +5,5 @@ declare interface Account {
   updated_at: string | null
   username: string | null
   website?: string | null
+  email?: string | null
 }
