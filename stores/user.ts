@@ -1,13 +1,9 @@
 import { defineStore } from 'pinia';
 
-interface ICustomersStore {
-  value: Customers[]
-}
-
 export const useUserStore = defineStore("user", () => {
   const authenticated = useSupabaseUser();
   const user = ref<Account | null>(null);
-  const customers = reactive<ICustomersStore>({ value: [] });
+  const customers = ref<Customers[] | null>(null);
   const customersCount = ref(0);
   const isLoggedIn = computed(() => user.value !== null);
   const displayName = computed(() => {
@@ -38,5 +34,14 @@ export const useUserStore = defineStore("user", () => {
     customersCount.value = count;
   }
 
-  return { user, displayName, customers, customersCount, isLoggedIn, setUser, setCustomers, setCustomersCount };
+  return {
+    user,
+    displayName,
+    customers,
+    customersCount,
+    isLoggedIn,
+    setUser,
+    setCustomers,
+    setCustomersCount
+  };
 });
