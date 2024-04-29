@@ -54,13 +54,12 @@
 </template>
 
 <script setup>
-import { useUserStore } from '#imports';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, helpers } from '@vuelidate/validators';
 const user = useSupabaseUser();
-const store = useUserStore();
+const customersStore = useCustomersStore();
 const search = ref(null);
-const { customers } = storeToRefs(store);
+const { customers } = storeToRefs(customersStore);
 const selectedCustomer = ref('');
 const updatedCustomer = ref('');
 const loading = ref(false);
@@ -143,7 +142,7 @@ async function updateCustomer() {
       const newCustomers = [...customers.value];
       const updatedIndex = newCustomers.findIndex((c) => c.id === editedCustomer.value.id);
       newCustomers[updatedIndex] = editedCustomer.value;
-      store.setCustomers(newCustomers);
+      customers.value = newCustomers;
       succeed.value = true;
       loading.value = false;
       searchCleared();

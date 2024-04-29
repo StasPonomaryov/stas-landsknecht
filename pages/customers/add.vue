@@ -19,7 +19,8 @@
               Description
             </label>
             <input class="input-text" name="customerDescription" placeholder="e.g. annoying uncle" type="text"
-              @change="v$.description.$touch" :class="{ 'input-error': v$.description.$error }"
+              @change="v$.description.$touch"
+              :class="{ 'input-error': v$.description.$error, 'input-valid': !v$.description.$invalid }"
               v-model="formData.description" />
           </div>
           <div class="input-area">
@@ -27,7 +28,7 @@
               Contacts <span class="required">*</span>
             </label>
             <textarea class="textarea" name="customerContacts" v-model="formData.contacts" @change="v$.contacts.$touch"
-              :class="{ 'input-error': v$.contacts.$error }">{{ formData.contacts }}</textarea>
+              :class="{ 'input-error': v$.contacts.$error, 'input-valid': !v$.contacts.$invalid }">{{ formData.contacts }}</textarea>
           </div>
           <div v-if="succeed" class="success-text mb-1">Saved {{ addedCustomer }}</div>
           <div class="input-area">
@@ -42,6 +43,8 @@
 <script setup>
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, helpers } from '@vuelidate/validators';
+const customersStore = useCustomersStore();
+const { customers } = storeToRefs(customersStore);
 const user = useSupabaseUser();
 const addedCustomer = ref('');
 const loading = ref(false);
@@ -71,11 +74,15 @@ const rules = computed(() => {
 
 const v$ = useVuelidate(rules, formData);
 
+if (!customers?.value) {
+  customersStore.fetchCustomers();
+}
+
 async function saveCustomer() {
   v$.value.$validate();
   if (!v$.value.$error) {
     loading.value = true;
-    const { data: newCustomer } = await useFetch('/api/customers/add',
+    const newCustomer = await $fetch('/api/customers/add',
       {
         method: 'POST',
         body: {
@@ -84,8 +91,10 @@ async function saveCustomer() {
           contacts: formData.contacts
         }
       });
-    if (newCustomer.value) {
-      addedCustomer.value = newCustomer.value.name;
+    if (newCustomer) {
+      addedCustomer.value = newCustomer.name;
+      const newCustomers = [...customers.value, newCustomer];
+      customers.value = newCustomers;
       succeed.value = true;
       resetUserForm();
       v$.value.name.$reset();

@@ -69,7 +69,7 @@ async function updateProfile() {
     }
   } catch (error) {
     if (error instanceof Error) {
-      alert(error.message);
+      throw error;
     }
   } finally {
     loading.value = false
