@@ -3,8 +3,6 @@ import { defineStore } from 'pinia';
 export const useUserStore = defineStore("user", () => {
   const authenticated = useSupabaseUser();
   const user = ref<Account | null>(null);
-  const customers = ref<Customers[] | null>(null);
-  const customersCount = ref(0);
   const isLoggedIn = computed(() => user.value !== null);
   const displayName = computed(() => {
     if (!user.value && authenticated.value) {
@@ -26,22 +24,10 @@ export const useUserStore = defineStore("user", () => {
     user.value = session;
   }
 
-  function setCustomers(data: Customers[]) {
-    customers.value = data;
-  }
-
-  function setCustomersCount(count: number) {
-    customersCount.value = count;
-  }
-
   return {
     user,
     displayName,
-    customers,
-    customersCount,
     isLoggedIn,
     setUser,
-    setCustomers,
-    setCustomersCount
   };
 });
