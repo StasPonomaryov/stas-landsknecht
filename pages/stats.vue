@@ -3,27 +3,22 @@
     <h2>Statistics</h2>
     <div class="grid cards">
       <div class="customers">
-        Customers: {{ customersCount }}
+        Customers: {{ customers.length }}
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { useUserStore } from '#imports';
-const store = useUserStore();
-const { customersCount, customers } = storeToRefs(store);
+const user = useSupabaseUser();
+const customersStore = useCustomersStore();
+const { customers } = storeToRefs(customersStore);
 
-if (!customers.value?.length) {
-  try {
-    const { data: count } = await useFetch(`/api/customers/get/?q=count`);
-    if (count) {
-      store.setCustomersCount(count);
-    }
-  } catch (e) {
-    throw e;
+onMounted(() => {
+  if (user.value && !customers?.value?.length) {
+    customersStore.fetchCustomers();
   }
-}
+});
 
 useHead({
   title: 'Stats - Landsknecht'
