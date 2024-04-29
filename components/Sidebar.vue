@@ -31,7 +31,7 @@
               <NuxtLink to="/customers/edit">Edit customer</NuxtLink>
             </li>
             <li>
-              <a href="#">Remove customer</a>
+              <NuxtLink to="/customers/remove">Remove customer</NuxtLink>
             </li>
           </ul>
         </li>
