@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
 
   if (body) {
     const { name, description, contacts } = body;
-    const updates: Customers = {
+    const updates: Customer = {
       name: name,
       ...description && { description },
       contacts,
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     const { data, error } = await supabase
       .from('test-customers')
       .upsert(updates)
-      .select('name')
+      .select('*')
       .single();
 
     if (error) {

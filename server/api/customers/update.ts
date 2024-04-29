@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
 
   if (body) {
     const { name, description, contacts, id } = body;
-    const updates: Customers = {
+    const updates: Customer = {
       name,
       ...description && { description },
       contacts,
