@@ -22,7 +22,7 @@
           </ul>
         </li>
         <li>
-          👨 <a href="#">Customers</a>
+          👨 <NuxtLink to="/customers">Customers</NuxtLink>
           <ul>
             <li>
               <NuxtLink to="/customers/add">Add customer</NuxtLink>
