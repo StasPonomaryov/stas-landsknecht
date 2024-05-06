@@ -191,6 +191,14 @@ input:disabled {
   text-align: center;
 }
 
+.relative {
+  position: relative;
+}
+
+.w-full {
+  width: 100%;
+}
+
 .site-wrapper {
   display: flex;
   flex-direction: column;
