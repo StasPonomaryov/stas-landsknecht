@@ -11,7 +11,7 @@
           </Vueform>
         </ClientOnly>
         <div>
-          <form class="form-widget" @submit.prevent="removeCustomer">
+          <form class="form-widget">
             <div class="input-area">
               <label for="customerName" class="input-label">
                 Name <span class="required">*</span>
@@ -44,14 +44,18 @@
             </div>
             <div v-if="succeed" class="success-text mb-1">Customer was removed</div>
             <div class="input-area">
-              <input type="submit" class="btn btn-primary" :value="loading ? '💤' : '🗑️Remove'"
-                :disabled="loading || v$.$invalid" />
+              <input type="button" class="btn btn-primary" :value="loading ? '💤' : '🗑️Remove'"
+                :disabled="loading || v$.$invalid" @click="openModal" />
             </div>
           </form>
         </div>
       </div>
     </div>
   </section>
+  <Modal :isOpen="isModalOpened" @modal-close="closeModal" @submit="removeCustomer" name="first-modal">
+    <template #header>Removing customer</template>
+    <template #content>Do you really want to remove customer {{ selectedCustomer }} from database?</template>
+  </Modal>
 </template>
 
 <script setup>
@@ -71,7 +75,14 @@ const getInitialFormData = () => ({
 });
 const formData = reactive(getInitialFormData());
 const resetUserForm = () => Object.assign(formData, getInitialFormData());
+const isModalOpened = ref(false);
 
+const openModal = () => {
+  isModalOpened.value = true;
+};
+const closeModal = () => {
+  isModalOpened.value = false;
+};
 const rules = computed(() => {
   return {
     name: {
@@ -130,7 +141,7 @@ async function removeCustomer() {
       });
     const newCustomers = customers.value.filter((i) => i.id !== selectedCustomer.value);
     console.log('>>>FILTERED', newCustomers);
-    
+    isModalOpened.value = false;
     customers.value = newCustomers;
     succeed.value = true;
     loading.value = false;
