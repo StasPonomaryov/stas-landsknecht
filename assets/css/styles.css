@@ -45,9 +45,10 @@ h6 {
   --main-text-color: #565656;
   --primary-color: #50c878;
   --accent-color: #388c68;
-  --divider-color: 217, 217, 217;
+  --divider-color: 227, 227, 227;
   --error-color: 204, 0, 0;
   --valid-color: 80, 200, 120;
+  --main-bg-darker: #e4e4e4; 
 }
 
 @media (prefers-color-scheme: dark) {
@@ -57,6 +58,7 @@ h6 {
     --primary-color: #50c878;
     --accent-color: #388c68;
     --divider-color: 46, 48, 54;
+    --main-bg-darker: #353944; 
   }
 }
 
@@ -316,3 +318,16 @@ input:disabled {
   width: clamp(200px, 25vw, 50vw);
 }
 
+.table {
+  background-color: var(--main-bg-darker);
+  border-radius: .5rem;
+}
+
+.table-head {
+  background-color: rgb(var(--divider-color));
+  text-align: left;
+}
+
+.table th, .table td {
+  padding: 0.5rem 0.75rem;
+}
