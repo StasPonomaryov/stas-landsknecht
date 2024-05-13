@@ -23,8 +23,8 @@
 </template>
 
 <script setup>
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from './ui/table';
 const props = defineProps(['columns', 'data']);
+
 </script>
 
 <style scoped></style>
