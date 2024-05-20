@@ -170,6 +170,11 @@ input:disabled {
   font-size: 0.75rem;
 }
 
+.fail-text {
+  color: #c00;
+  font-size: 0.75rem;
+}
+
 .mr-2 {
   margin-right: 1rem;
 }
