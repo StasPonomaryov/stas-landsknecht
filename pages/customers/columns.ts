@@ -2,18 +2,21 @@ export const columns = [
   {
     key: 'id',
     header: 'ID',
-    cell: ({ row: Customer }) => row.id
+    cell: ({ row }: { row: Customer }) => row.id
   },
   {
     key: 'name',
-    header: 'NAME'
+    header: 'NAME',
+    cell: ({ row }: { row: Customer }) => row.name
   },
   {
     key: 'description',
-    header: 'DESCRIPTION'
+    header: 'DESCRIPTION',
+    cell: ({ row }: { row: Customer }) => row.description
   },
   {
     key: 'contacts',
-    header: 'CONTACTS'
+    header: 'CONTACTS',
+    cell: ({ row }: { row: Customer }) => row.contacts
   }
 ];
