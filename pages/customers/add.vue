@@ -31,6 +31,7 @@
               :class="{ 'input-error': v$.contacts.$error, 'input-valid': !v$.contacts.$invalid }">{{ formData.contacts }}</textarea>
           </div>
           <div v-if="succeed" class="success-text mb-1">Saved {{ addedCustomer }}</div>
+          <div v-if="failed" class="fail-text mb-1">Failed to add customer, {{ failed }}</div>
           <div class="input-area">
             <input type="submit" class="btn btn-primary" :value="loading ? '💤' : '➕Add'" :disabled="loading" />
           </div>
@@ -49,6 +50,7 @@ const user = useSupabaseUser();
 const addedCustomer = ref('');
 const loading = ref(false);
 const succeed = ref(false);
+const failed = ref('');
 const getInitialFormData = () => ({
   name: '',
   description: '',
@@ -81,25 +83,31 @@ if (!customers?.value) {
 async function saveCustomer() {
   v$.value.$validate();
   if (!v$.value.$error) {
-    loading.value = true;
-    const newCustomer = await $fetch('/api/customers/add',
-      {
-        method: 'POST',
-        body: {
-          name: formData.name,
-          description: formData.description,
-          contacts: formData.contacts
-        }
-      });
-    if (newCustomer) {
-      addedCustomer.value = newCustomer.name;
-      const newCustomers = [...customers.value, newCustomer];
-      customers.value = newCustomers;
-      succeed.value = true;
-      resetUserForm();
-      v$.value.name.$reset();
-      v$.value.description.$reset();
-      v$.value.contacts.$reset();
+    try {
+      loading.value = true;
+      const newCustomer = await $fetch('/api/customers/add',
+        {
+          method: 'POST',
+          body: {
+            name: formData.name,
+            description: formData.description,
+            contacts: formData.contacts,
+            user_id: user.value.id
+          }
+        });
+      if (newCustomer) {
+        addedCustomer.value = newCustomer.name;
+        const newCustomers = [...customers.value, newCustomer];
+        customers.value = newCustomers;
+        succeed.value = true;
+        resetUserForm();
+        v$.value.name.$reset();
+        v$.value.description.$reset();
+        v$.value.contacts.$reset();
+        loading.value = false;
+      }
+    } catch (error) {
+      failed.value = error;
       loading.value = false;
     }
   }

@@ -43,8 +43,10 @@
                 }">{{ formData.contacts }}</textarea>
             </div>
             <div v-if="succeed" class="success-text mb-1">Saved {{ updatedCustomer }}</div>
+            <div v-if="failed" class="fail-text mb-1">Failed to update customer, {{ failed }}</div>
             <div class="input-area">
-              <input type="submit" class="btn btn-primary" :value="loading ? '💤' : '✅Update'" :disabled="loading || v$.$invalid" />
+              <input type="submit" class="btn btn-primary" :value="loading ? '💤' : '✅Update'"
+                :disabled="loading || v$.$invalid" />
             </div>
           </form>
         </div>
@@ -64,6 +66,7 @@ const selectedCustomer = ref('');
 const updatedCustomer = ref('');
 const loading = ref(false);
 const succeed = ref(false);
+const failed = ref('');
 const getInitialFormData = () => ({
   name: '',
   description: '',
@@ -127,25 +130,31 @@ async function updateCustomer() {
   v$.value.$validate();
   if (!v$.value.$error) {
     loading.value = true;
-    const { data: editedCustomer } = await useFetch('/api/customers/update',
-      {
-        method: 'POST',
-        body: {
-          name: formData.name,
-          description: formData.description,
-          contacts: formData.contacts,
-          id: selectedCustomer
-        }
-      });
-    if (editedCustomer.value) {
-      updatedCustomer.value = editedCustomer.value.name;
-      const newCustomers = [...customers.value];
-      const updatedIndex = newCustomers.findIndex((c) => c.id === editedCustomer.value.id);
-      newCustomers[updatedIndex] = editedCustomer.value;
-      customers.value = newCustomers;
-      succeed.value = true;
+    try {
+      const editedCustomer = await $fetch('/api/customers/update',
+        {
+          method: 'POST',
+          body: {
+            name: formData.name,
+            description: formData.description,
+            contacts: formData.contacts,
+            id: selectedCustomer.value,
+            user_id: user.value.id
+          }
+        });
+      if (editedCustomer) {
+        updatedCustomer.value = editedCustomer.name;
+        const newCustomers = [...customers.value];
+        const updatedIndex = newCustomers.findIndex((c) => c.id === editedCustomer.id);
+        newCustomers[updatedIndex] = editedCustomer;
+        customers.value = newCustomers;
+        succeed.value = true;
+        loading.value = false;
+        searchCleared();
+      }
+    } catch (error) {
+      failed.value = error;
       loading.value = false;
-      searchCleared();
     }
   }
 }

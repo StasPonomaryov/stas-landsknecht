@@ -8,18 +8,19 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   if (body) {
-    const { name, description, contacts, id } = body;
+    const { name, description, contacts, id, user_id } = body;
     const updates: Customer = {
       name,
       ...description && { description },
       contacts,
+      user_id
     }
 
     const { data, error } = await supabase
       .from('test-customers')
       .update(updates)
       .eq('id', id)
-      .select('*')
+      .select('id, name, description, contacts')
       .single();
 
     if (error) {
