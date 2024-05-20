@@ -24,11 +24,11 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/styles.css',
   ],
-  security: {
-    corsHandler: {
-      origin: '*'
-    }
-  },
+  // security: {
+  //   corsHandler: {
+  //     origin: '*'
+  //   }
+  // },
   runtimeConfig: {
     public: {
       baseUrl: process.env.BASE_URL || 'http://localhost:5000'
@@ -39,5 +39,16 @@ export default defineNuxtConfig({
       path: '~/components',
       pathPrefix: false
     }
-  ]
+  ],
+  security: {
+    enabled: true,
+    nonce: true,
+    headers: {
+      contentSecurityPolicy: {
+        'script-src': ["'nonce-{{nonce}}'", "'strict-dynamic'"],
+      },
+      // 2.
+      crossOriginEmbedderPolicy: false,
+    },
+  },
 })
