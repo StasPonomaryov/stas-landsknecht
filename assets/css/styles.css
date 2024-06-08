@@ -48,7 +48,10 @@ h6 {
   --divider-color: 227, 227, 227;
   --error-color: 204, 0, 0;
   --valid-color: 80, 200, 120;
+  --valid-text-color: 255, 255, 255;
   --main-bg-darker: #e4e4e4; 
+  --selected-bg-color: 237, 237, 237;
+  --selected-text-color: var(--main-bg-color);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -59,6 +62,8 @@ h6 {
     --accent-color: #388c68;
     --divider-color: 46, 48, 54;
     --main-bg-darker: #353944; 
+    --valid-text-color: 10, 10, 10;
+    --selected-bg-color: 136, 133, 119;
   }
 }
 

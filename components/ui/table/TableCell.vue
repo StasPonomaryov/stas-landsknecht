@@ -10,4 +10,9 @@ import clsx from 'clsx';
 const props = defineProps(['class']);
 </script>
 
-<style scoped></style>
+<style scoped>
+.selected {
+  background-color: rgb(var(--selected-bg-color));
+  color: rgb(var(--selected-text-color));
+}
+</style>
