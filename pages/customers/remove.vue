@@ -63,7 +63,9 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, helpers } from '@vuelidate/validators';
 const user = useSupabaseUser();
 const customersStore = useCustomersStore();
+const route = useRoute();
 const search = ref(null);
+const removeId = ref(route.query.id || null);
 const { customers } = storeToRefs(customersStore);
 const selectedCustomer = ref('');
 const loading = ref(false);
@@ -147,6 +149,10 @@ async function removeCustomer() {
     loading.value = false;
     searchCleared();
   }
+}
+
+if (removeId.value) {
+  customerSelected(Number(removeId.value));
 }
 
 watch(succeed, () => {

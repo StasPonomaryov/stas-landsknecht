@@ -60,7 +60,9 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, helpers } from '@vuelidate/validators';
 const user = useSupabaseUser();
 const customersStore = useCustomersStore();
+const route = useRoute();
 const search = ref(null);
+const editId = ref(route.query.id || null);
 const { customers } = storeToRefs(customersStore);
 const selectedCustomer = ref('');
 const updatedCustomer = ref('');
@@ -157,6 +159,10 @@ async function updateCustomer() {
       loading.value = false;
     }
   }
+}
+
+if (editId.value) {
+  customerSelected(Number(editId.value));
 }
 
 watch(succeed, () => {
