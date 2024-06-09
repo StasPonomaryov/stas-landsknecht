@@ -9,8 +9,8 @@
     </TableHeader>
     <TableBody>
       <template v-if="data.length">
-        <TableRow v-for="row in data" :key="row.id" @click="() => handleRowSelect(row.id)">
-          <TableCell :class="selectedRow === row.id && 'selected'" v-for="customer in row">{{ customer }}</TableCell>
+        <TableRow v-for="row in data" :key="row.id" @click="handleRowSelect(row.id, $event)">
+          <TableCell :class="(selectedRow === row.id || selectedRows.includes(row.id)) && 'selected'" v-for="cell in row">{{ cell }}</TableCell>
         </TableRow>
       </template>
       <template v-else>
@@ -20,25 +20,68 @@
       </template>
     </TableBody>
   </Table>
-  <div class="actions" v-if="selectedRow">
-    <EditButton @click="redirectToPage('edit')" />
-    <RemoveButton @click="() => redirectToPage('remove')" />
+  <div class="actions" v-if="getSelectedRows > 0">
+    <EditButton v-if="!updating" @click="editButtonClick" />
+    <RemoveButton v-if="!updating" @click="removeButtonClick" />
+    <UpdateButton v-if="updating" />
+    <CancelButton v-if="updating" @click="() => updating = false" />
   </div>
+  <div class="mt-2" v-if="getSelectedRows > 0">
+    You selected {{ getSelectedRows }} row(s)    
+  </div>
+  <small>💡Tip: to select multiple rows you can hold Ctrl button and click on rows</small>
 </template>
 
 <script setup>
 const router = useRouter();
+const route = useRoute();
 const props = defineProps(['columns', 'data']);
 const selectedRow = ref(null);
+const selectedRows = ref([]);
+const updating = ref(false);
 
-function handleRowSelect(id) {
+function handleRowSelect(id, event) {
+  event.preventDefault();
+  const ctrlPressed = event.ctrlKey;
+  if (ctrlPressed) {
+    if (selectedRow.value) {
+      selectedRows.value.push(selectedRow.value);
+      selectedRow.value = null;
+    }
+    if (selectedRows.value.includes(id)) {
+      if (selectedRows.value.length > 1) { 
+        return selectedRows.value = selectedRows.value.filter((r) => r !== id);
+      }
+      selectedRow.value = null;
+      return selectedRows.value = [];
+    }
+    
+    return selectedRows.value.push(id);
+  }
+  selectedRows.value = [];
   if (id === selectedRow.value) return selectedRow.value = null;
+
   return selectedRow.value = id;
 }
 
-function redirectToPage(pageId) {
-  return router.push(`/customers/${pageId}?id=${selectedRow.value}`);
+function editButtonClick() {
+  if (selectedRow.value) return redirectToPage('edit');
+  return updating.value = true;
 }
+
+function removeButtonClick() {
+  if (selectedRow.value) return redirectToPage('remove');
+  return updating.value = true;
+}
+
+function redirectToPage(pageId) {
+  return router.push(`${route.matched[0].path}/${pageId}?id=${selectedRow.value}`);
+}
+
+const getSelectedRows = computed(() => {
+  if (selectedRow.value) return 1;
+  return selectedRows.value.length;
+});
 </script>
 
 <style scoped>
