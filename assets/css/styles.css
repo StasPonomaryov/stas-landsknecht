@@ -62,7 +62,6 @@ h6 {
     --accent-color: #388c68;
     --divider-color: 46, 48, 54;
     --main-bg-darker: #353944; 
-    --valid-text-color: 10, 10, 10;
     --selected-bg-color: 136, 133, 119;
   }
 }
@@ -190,6 +189,10 @@ input:disabled {
 
 .mb-1 {
   margin-bottom: 0.5rem;
+}
+
+.mt-2 {
+  margin-top: 1rem;
 }
 
 .grid.cards {
@@ -340,4 +343,12 @@ input:disabled {
 
 .table th, .table td {
   padding: 0.5rem 0.75rem;
+}
+
+.table td,
+.table td:focus-within,
+.table td:active,
+.table td:focus {
+  outline: none!important;
+  user-select: none;
 }
