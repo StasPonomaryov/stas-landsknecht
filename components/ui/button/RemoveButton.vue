@@ -1,5 +1,5 @@
 <template>
-  <button class="btn btn-edit">
+  <button class="btn btn-remove">
     🗑️Remove
   </button>
 </template>
@@ -9,7 +9,7 @@
 </script>
 
 <style scoped>
-.btn-edit {
+.btn-remove {
   background-color: rgb(var(--error-color));
   border: 0;
   color: rgb(var(--valid-text-color));

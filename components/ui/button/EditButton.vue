@@ -13,6 +13,6 @@
   background-color: rgb(var(--valid-color));
   border: 0;
   color: rgb(var(--valid-text-color));
-  margin-right: 0.4rem;
+  margin-right: 0.5rem;
 }
 </style>
