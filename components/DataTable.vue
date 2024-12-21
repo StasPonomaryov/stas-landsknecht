@@ -10,7 +10,12 @@
     <TableBody>
       <template v-if="data.length">
         <TableRow v-for="row in data" :key="row.id" @click="handleRowSelect(row.id, $event)">
-          <TableCell :class="(selectedRow === row.id || selectedRows.includes(row.id)) && 'selected'" v-for="cell in row">{{ cell }}</TableCell>
+          <TableCell :class="(selectedRow === row.id || selectedRows.includes(row.id)) && 'selected'" v-for="cell in row">
+            <slot v-if="updating && (selectedRow === row.id || selectedRows.includes(row.id))">
+              <InputText :value="cell" @change="updateValue" />
+            </slot>
+            <slot v-else>{{ cell }}</slot>
+          </TableCell>
         </TableRow>
       </template>
       <template v-else>
@@ -23,7 +28,7 @@
   <div class="actions" v-if="getSelectedRows > 0">
     <EditButton v-if="!updating" @click="editButtonClick" />
     <RemoveButton v-if="!updating" @click="removeButtonClick" />
-    <UpdateButton v-if="updating" />
+    <UpdateButton v-if="updating" @click="updateRows" />
     <CancelButton v-if="updating" @click="() => updating = false" />
   </div>
   <div class="mt-2" v-if="getSelectedRows > 0">
@@ -36,12 +41,14 @@
 const router = useRouter();
 const route = useRoute();
 const props = defineProps(['columns', 'data']);
+const emits = defineEmits(['updateData']);
 const selectedRow = ref(null);
 const selectedRows = ref([]);
 const updating = ref(false);
 
 function handleRowSelect(id, event) {
   event.preventDefault();
+  console.log('>>>UPDATING?', updating.value);
   const ctrlPressed = event.ctrlKey;
   if (ctrlPressed) {
     if (selectedRow.value) {
@@ -76,6 +83,14 @@ function removeButtonClick() {
 
 function redirectToPage(pageId) {
   return router.push(`${route.matched[0].path}/${pageId}?id=${selectedRow.value}`);
+}
+
+function updateValue(value) {
+  console.log('>>>VALUE', value);
+}
+
+function updateRows() {
+  console.log('>>>UPDATING ROWS');  
 }
 
 const getSelectedRows = computed(() => {
