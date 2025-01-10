@@ -7,31 +7,31 @@
     </div>
     <div class="sidebar-content">
       <ul>
-        <li>
-          📝 <a href="#">Orders</a>
+        <li @click="toggleSidebar">
+          📝 <NuxtLink to="/tasks">Tasks</NuxtLink>
           <ul>
             <li>
-              <a href="#">Add order</a>
+              <a href="#">Add task</a>
             </li>
             <li>
-              <a href="#">Edit order</a>
+              <a href="#">Edit task</a>
             </li>
             <li>
-              <a href="#">Remove order</a>
+              <a href="#">Remove task</a>
             </li>
           </ul>
         </li>
-        <li>
-          👨 <NuxtLink to="/customers">Customers</NuxtLink>
+        <li @click="toggleSidebar">
+          👨 <NuxtLink to="/clients">Clients</NuxtLink>
           <ul>
             <li>
-              <NuxtLink to="/customers/add">Add customer</NuxtLink>
+              <NuxtLink to="/clients/add">Add client</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/customers/edit">Edit customer</NuxtLink>
+              <NuxtLink to="/clients/edit">Edit client</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/customers/remove">Remove customer</NuxtLink>
+              <NuxtLink to="/clients/remove">Remove client</NuxtLink>
             </li>
           </ul>
         </li>

@@ -1,23 +1,32 @@
 <template>
   <footer class="site-footer">
     <div class="copyright">&copy; Stas Ponomaryov, 2024</div>
-    <div class="stats">👨: {{ customers.length }}; 📝: {{ orders }};</div>
-    <div class="build">1.00</div>
+    <div class="stats">
+      <span title="Clients count">👨: {{ clientsStore.clients?.length || clientsLength }};</span>
+      <span title="Tasks count">📝: {{ tasksStore.tasks?.length || tasksLength }};</span>
+      <span title="User ID">👑: {{ user.uid }}</span>
+    </div>
+    <div class="build">1.01</div>
   </footer>
 </template>
 
 <script setup>
-const user = useSupabaseUser();
-const customersStore = useCustomersStore();
-const { customers } = storeToRefs(customersStore);
-const orders = ref(0);
+import { useTasksStore } from '~/stores/tasks';
+import { useClientsStore } from '~/stores/clients';
 
-onMounted(() => {
-  if (user.value && !customers?.value?.length) {
-    customersStore.fetchCustomers();
-  }
-});
+const user = useCurrentUser();
+const tasksStore = useTasksStore();
+const clientsStore = useClientsStore();
+const clientsLength = ref(0);
+const tasksLength = ref(0);
 
+if (!clientsStore.clients?.length) {
+  clientsLength.value = await clientsStore.getClientsCount();
+}
+
+if (!tasksStore.tasks?.length) {
+  tasksLength.value = await tasksStore.getTasksCount();
+}
 </script>
 
 <style scoped></style>

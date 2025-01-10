@@ -10,11 +10,11 @@
     <TableBody>
       <template v-if="data.length">
         <TableRow v-for="row in data" :key="row.id" @click="handleRowSelect(row.id, $event)">
-          <TableCell :class="(selectedRow === row.id || selectedRows.includes(row.id)) && 'selected'" v-for="cell in row">
+          <TableCell :class="(selectedRow === row.id || selectedRows.includes(row.id)) && 'selected'" v-for="header in columns" :key="header.key">
             <slot v-if="updating && (selectedRow === row.id || selectedRows.includes(row.id))">
-              <InputText :value="cell" @change="updateValue" />
+              <InputText :value="row[header.key]" @change="updateValue" />
             </slot>
-            <slot v-else>{{ cell }}</slot>
+            <slot v-else>{{ row[header.key] }}</slot>
           </TableCell>
         </TableRow>
       </template>

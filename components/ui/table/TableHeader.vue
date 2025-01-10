@@ -1,13 +1,14 @@
+<script setup lang="ts">
+import type { HTMLAttributes } from 'vue'
+import { cn } from '@/lib/utils'
+
+const props = defineProps<{
+  class?: HTMLAttributes['class']
+}>()
+</script>
+
 <template>
-  <thead :class="clsx('table-header', props.class)">
+  <thead :class="cn('', props.class)">
     <slot />
   </thead>
 </template>
-
-<script setup>
-import clsx from 'clsx';
-
-const props = defineProps(['class']);
-</script>
-
-<style scoped></style>

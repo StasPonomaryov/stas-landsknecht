@@ -1,11 +1,14 @@
+<script setup lang="ts">
+import type { HTMLAttributes } from 'vue'
+import { cn } from '@/lib/utils'
+
+const props = defineProps<{
+  class?: HTMLAttributes['class']
+}>()
+</script>
+
 <template>
-  <tr :class="clsx('table-row', props.class)">
+  <tr :class="cn('border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted', props.class)">
     <slot />
   </tr>
 </template>
-
-<script setup>
-import clsx from 'clsx';
-
-const props = defineProps(['class']);
-</script>

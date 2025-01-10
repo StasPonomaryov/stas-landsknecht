@@ -1,28 +1,35 @@
 <template>
   <header class="site-header">
     <div class="logo">
-      <NuxtLink to="/stats">Landsknecht 🏰</NuxtLink>
+      <NuxtLink to="/">Landsknecht 🏰</NuxtLink>
     </div>
     <div v-if="user" class="user">
-      Salut,
-      <NuxtLink to="/account"><b>{{ displayName }}</b></NuxtLink>
+      <span class="greeting">Salut, </span>
+      <NuxtLink to="/account"><span class="username">{{ user.displayName ?? user.email }}</span></NuxtLink>
       <span class="link ml-2" @click="userLogout">❌</span>
     </div>
   </header>
 </template>
 
 <script setup>
-import { useUserStore } from '#imports';
-const user = useSupabaseUser();
-const { auth } = useSupabaseClient();
-const store = useUserStore();
-const { displayName } = storeToRefs(store);
+import { signOut } from 'firebase/auth';
+
+const auth = useFirebaseAuth();
+const user = useCurrentUser();
 
 const userLogout = async () => {
-  await auth.signOut();
-  navigateTo('/');
+  await signOut(auth);
+  navigateTo('/login');
 }
 </script>
 
 <style scoped>
+.username {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 150px;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
 </style>

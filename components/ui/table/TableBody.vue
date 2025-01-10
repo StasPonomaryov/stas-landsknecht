@@ -1,13 +1,14 @@
+<script setup lang="ts">
+import type { HTMLAttributes } from 'vue'
+import { cn } from '@/lib/utils'
+
+const props = defineProps<{
+  class?: HTMLAttributes['class']
+}>()
+</script>
+
 <template>
-  <tbody :class="clsx('table-body', props.class)">
+  <tbody :class="cn('[&_tr:last-child]:border-0', props.class)">
     <slot />
   </tbody>
 </template>
-
-<script setup>
-import clsx from 'clsx';
-
-const props = defineProps(['class']);
-</script>
-
-<style scoped></style>
