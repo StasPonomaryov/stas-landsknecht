@@ -19,6 +19,7 @@ import {
 } from '@tanstack/vue-table'
 import TasksTablePagination from './tasks-table-pagination.vue'
 import { valueUpdater } from '~/lib/utils'
+import { Pencil1Icon, TrashIcon } from '@radix-icons/vue';
 
 const props = defineProps<{
   columns: ColumnDef<TData, TValue>[]
@@ -27,6 +28,7 @@ const props = defineProps<{
 
 const sorting = ref<SortingState>([])
 const columnFilters = ref<ColumnFiltersState>([])
+const rowSelection = ref({})
 
 const table = useVueTable({
   get data() { return props.data },
@@ -37,19 +39,26 @@ const table = useVueTable({
   onSortingChange: updaterOrValue => valueUpdater(updaterOrValue, sorting),
   onColumnFiltersChange: updaterOrValue => valueUpdater(updaterOrValue, columnFilters),
   getFilteredRowModel: getFilteredRowModel(),
+  onRowSelectionChange: updaterOrValue => valueUpdater(updaterOrValue, rowSelection),
   state: {
     get sorting() { return sorting.value },
     get columnFilters() { return columnFilters.value },
+    get rowSelection() { return rowSelection.value },
   },
 })
 </script>
 
 <template>
   <div class="rounded-md">
-    <div class="flex items-center py-4">
+    <div class="flex items-center justify-between py-4">
       <Input class="max-w-sm" placeholder="Filter by description..."
         :model-value="table.getColumn('text')?.getFilterValue() as string"
         @update:model-value=" table.getColumn('text')?.setFilterValue($event)" />
+      <div class="flex items-center space-x-2"
+        v-if="!table.getIsAllPageRowsSelected() && table.getIsSomePageRowsSelected()">
+        <Button variant="destructive"><TrashIcon class="w-4 h-4" />Remove</Button>
+        <Button v-if="table.getFilteredSelectedRowModel().rows.length === 1" variant="outline"><Pencil1Icon class="w-4 h-4" />Edit</Button>
+      </div>
     </div>
     <Table class="table">
       <TableHeader class="table-head">

@@ -72,38 +72,40 @@ export const dataClientsOrdersCount = (tasks: Task[]) => {
   return data;
 };
 
-export const dataClientsOrdersIncome = (tasks: Task[]) => {
+export const dataClientsOrdersIncome = (tasks: Task[], selectedYear: number) => {
   if (!tasks.length) {
     return [];
   }
 
+  console.log('Tasks', tasks);
+
   const data: TasksChart[] = [];
 
   labelsMonths.forEach((month, index) => {
-    const monthIndex = String(index + 1).padStart(2, '0'); // Формат місяця: '01', '02', ..., '12'
+    const monthIndex = String(index + 1).padStart(2, '0');
+    let monthIncome = 0;
 
-    const monthTasks = tasks.filter((task) => {
-      const taskStartMonth = task.start.slice(5, 7); // Отримуємо місяць початку
-      const taskEndMonth = task.end?.slice(5, 7); // Отримуємо місяць завершення
-      return taskStartMonth === monthIndex || taskEndMonth === monthIndex;
-    });
-
-    const monthIncome = monthTasks.reduce((acc, task) => {
-      const taskStartMonth = task.start.slice(5, 7);
-      const taskEndMonth = task.end?.slice(5, 7);
+    tasks.forEach((task) => {
+      const taskStart = new Date(task.start);
+      const taskEnd = task.end ? new Date(task.end) : null;
       const prepayment = Number(task.priceStart) || 0;
       const postpayment = Number(task.priceEnd) || 0;
 
-      if (taskStartMonth === monthIndex && taskEndMonth === monthIndex) {
-        return acc + postpayment;
-      } else if (taskStartMonth === monthIndex) {
-        return acc + prepayment;
-      } else if (taskEndMonth === monthIndex) {
-        return acc + postpayment;
-      } else {
-        return acc;
+      const taskStartYear = taskStart.getFullYear();
+      const taskStartMonth = String(taskStart.getMonth() + 1).padStart(2, '0');
+      const taskEndYear = taskEnd ? taskEnd.getFullYear() : null;
+      const taskEndMonth = taskEnd ? String(taskEnd.getMonth() + 1).padStart(2, '0') : null;
+
+      if (taskStartYear === selectedYear && taskStartMonth === monthIndex && prepayment > 0) {
+        console.log(`Prepayment ${prepayment} added to ${month} ${selectedYear} for task ${task.id}`);
+        monthIncome += prepayment;
       }
-    }, 0);
+
+      if (taskEndYear === selectedYear && taskEndMonth === monthIndex && postpayment > 0) {
+        console.log(`Postpayment ${postpayment} added to ${month} ${selectedYear} for task ${task.id}`);
+        monthIncome += postpayment;
+      }
+    });
 
     data.push({ month, count: monthIncome });
   });

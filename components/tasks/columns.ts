@@ -4,11 +4,27 @@ import { ArrowUpDown, ChevronDown } from 'lucide-vue-next'
 import { getExcerpt, parseOrderStatus } from "~/lib/utils"
 import type { NewTask } from "~/types"
 import Button from "../ui/button/Button.vue";
+import { Checkbox } from '@/components/ui/checkbox'
 
 export const columns: ColumnDef<NewTask>[] = [
   {
+    id: 'select',
+    header: ({ table }) => h(Checkbox, {
+      'checked': table.getIsAllPageRowsSelected(),
+      'onUpdate:checked': (value: boolean) => table.toggleAllPageRowsSelected(!!value),
+      'ariaLabel': 'Select all',
+    }),
+    cell: ({ row }) => h(Checkbox, {
+      'checked': row.getIsSelected(),
+      'onUpdate:checked': (value: boolean) => row.toggleSelected(!!value),
+      'ariaLabel': 'Select row',
+    }),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: 'title',
-    header: () => h('div', { class: 'text-sm w-[190px]'}, 'Title'),
+    header: () => h('div', { class: 'text-sm w-[190px]' }, 'Title'),
     cell: ({ row }) => {
       const title: string = row.getValue('title')
 
@@ -30,7 +46,7 @@ export const columns: ColumnDef<NewTask>[] = [
   {
     accessorKey: 'start',
     header: ({ column }) => {
-      return h(Button, { 
+      return h(Button, {
         variant: 'ghost',
         class: 'font-bold text-sm w-[90px]',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
@@ -48,7 +64,7 @@ export const columns: ColumnDef<NewTask>[] = [
   {
     accessorKey: 'priceStart',
     header: ({ column }) => {
-      return h(Button, { 
+      return h(Button, {
         variant: 'ghost',
         class: 'font-bold text-sm',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
@@ -66,7 +82,7 @@ export const columns: ColumnDef<NewTask>[] = [
   {
     accessorKey: 'end',
     header: ({ column }) => {
-      return h(Button, { 
+      return h(Button, {
         variant: 'ghost',
         class: 'font-bold text-sm w-[90px]',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
@@ -86,7 +102,7 @@ export const columns: ColumnDef<NewTask>[] = [
   {
     accessorKey: 'priceEnd',
     header: ({ column }) => {
-      return h(Button, { 
+      return h(Button, {
         variant: 'ghost',
         class: 'font-bold text-sm',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
@@ -104,7 +120,7 @@ export const columns: ColumnDef<NewTask>[] = [
   {
     accessorKey: 'status',
     header: ({ column }) => {
-      return h(Button, { 
+      return h(Button, {
         variant: 'ghost',
         class: 'font-bold text-sm w-[90px]',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),

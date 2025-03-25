@@ -1,9 +1,11 @@
 <template>
   <section class="login-control text-center">
     <h2>Sign in to your account</h2>
-    <button class="btn btn-primary"
-      @click="signInWithGithub">Github
+    <button class="btn btn-primary" @click="signInWithGithub">Github
     </button>
+    <div class="text-sm text-red-500" v-if="errorMessage">
+      {{ errorMessage }}
+    </div>
   </section>
 </template>
 <script setup lang="ts">
@@ -11,9 +13,15 @@ import { signInWithPopup, GithubAuthProvider } from 'firebase/auth';
 
 const auth = useFirebaseAuth()!;
 const router = useRouter();
+const errorMessage = ref('');
 
 async function signInWithGithub() {
-  await signInWithPopup(auth, new GithubAuthProvider())
+  try {
+    await signInWithPopup(auth, new GithubAuthProvider())
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Error) errorMessage.value = error?.message || 'Something went wrong';
+  }
   return router.push('/');
 }
 

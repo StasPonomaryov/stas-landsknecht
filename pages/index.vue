@@ -7,7 +7,7 @@
     <div class="row">
       <div class="col">
         Choose year:
-        <Select :options="allYears" :defaultOption="targetYear" @update="onUpdateOption" />
+        <QuickSelect :options="allYears" :defaultOption="targetYear" @update="onUpdateOption" />
       </div>
       <div class="col">
         <b>This year income:</b>
@@ -27,7 +27,6 @@
 import { useTasksStore } from '~/stores/tasks';
 import { useClientsStore } from '~/stores/clients';
 import type { Task, TasksChart } from '~/types';
-import Select from '~/components/landsknecht/select.vue';
 const user = useCurrentUser();
 const tasksStore = useTasksStore();
 const clientsStore = useClientsStore();
@@ -54,9 +53,9 @@ async function loadTasksOfYear(year: number) {
   lastPeriodTasks.value = lastYear;
 }
 
-function getTasksStats(yearTasks: Task[]) {
+function getTasksStats(yearTasks: Task[], lastPeriodTasks: Task[], targetYear: number) {
   const ordersCount = dataClientsOrdersCount(yearTasks);
-  const ordersIncome = dataClientsOrdersIncome(yearTasks);
+  const ordersIncome = dataClientsOrdersIncome([...yearTasks, ...lastPeriodTasks], targetYear);
   const clientsOrdersCount = dataClientsByOrdersCount(yearTasks);
   const clientsOrdersIncome = dataClientsByOrdersIncome(yearTasks);
   tasksByCount.value = ordersCount;
@@ -86,7 +85,7 @@ watch(targetYear, (newYear) => {
 });
 
 watch(thisYearTasks, (newTasks) => {
-  getTasksStats(newTasks);
+  getTasksStats(newTasks, lastPeriodTasks.value, targetYear.value);
 });
 
 function onUpdateOption(value: number) {

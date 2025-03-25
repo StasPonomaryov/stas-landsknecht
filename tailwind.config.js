@@ -1,4 +1,5 @@
 const animate = require("tailwindcss-animate")
+const vueform = require('@vueform/vueform/tailwind')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -82,5 +83,5 @@ module.exports = {
       },
     },
   },
-  plugins: [animate],
+  plugins: [animate, vueform],
 }
