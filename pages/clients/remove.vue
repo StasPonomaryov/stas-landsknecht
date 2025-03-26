@@ -54,7 +54,7 @@
   </section>
   <Modal :isOpen="isModalOpened" @modal-close="closeModal" @submit="removeClient" name="first-modal">
     <template #header>Removing client</template>
-    <template #content>Do you really want to remove client {{ selectedClient }} from database?</template>
+    <template #content>Do you really want to remove client {{ clients.find((c) => c.id === selectedClient)?.name }} from database?</template>
   </Modal>
 </template>
 

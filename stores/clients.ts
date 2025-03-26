@@ -13,9 +13,9 @@ export const useClientsStore = defineStore('clientsStore', {
       this.clients = snapshot.docs.map((doc) => ({ ...doc.data() })) as Client[];
     },
 
-    async addClient(client: NewClient) {
+    async addClient(client: NewClient, uid: string) {
       const { $clientsRef } = useNuxtApp();
-      const docRef = await addDoc($clientsRef, client);
+      const docRef = await addDoc($clientsRef, { ...client, users: [uid] });
 
       this.clients.push({ id: docRef.id, ...client });
     },

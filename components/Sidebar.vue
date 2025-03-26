@@ -11,7 +11,7 @@
           📝 <NuxtLink to="/tasks">Tasks</NuxtLink>
           <ul>
             <li>
-              <a href="#">Add task</a>
+              <a href="/tasks/add">Add task</a>
             </li>
             <li>
               <a href="#">Edit task</a>

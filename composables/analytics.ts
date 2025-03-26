@@ -97,12 +97,10 @@ export const dataClientsOrdersIncome = (tasks: Task[], selectedYear: number) => 
       const taskEndMonth = taskEnd ? String(taskEnd.getMonth() + 1).padStart(2, '0') : null;
 
       if (taskStartYear === selectedYear && taskStartMonth === monthIndex && prepayment > 0) {
-        console.log(`Prepayment ${prepayment} added to ${month} ${selectedYear} for task ${task.id}`);
         monthIncome += prepayment;
       }
 
       if (taskEndYear === selectedYear && taskEndMonth === monthIndex && postpayment > 0) {
-        console.log(`Postpayment ${postpayment} added to ${month} ${selectedYear} for task ${task.id}`);
         monthIncome += postpayment;
       }
     });

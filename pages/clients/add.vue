@@ -85,7 +85,7 @@ async function saveClient() {
   if (!v$.value.$error) {
     try {
       loading.value = true;
-      await clientsStore.addClient(formData);
+      await clientsStore.addClient(formData, user.value?.uid);
       addedClient.value = formData.name;
       // const newClients = [...clients.value, formData];
       // clients.value = newClients;
