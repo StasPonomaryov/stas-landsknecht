@@ -150,6 +150,7 @@ input:disabled {
   border-radius: 6px;
   color: var(--main-text-color);
   padding: 0.4rem 0.8rem;
+  width: 100%;
 }
 
 .input-error {
