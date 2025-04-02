@@ -1,30 +1,40 @@
 <template>
   <section class="login-control text-center">
-    <h2>Sign in to your account</h2>
-    <button class="btn btn-primary" @click="signInWithGithub">Github
+    <h2>Welcome to Landsknecht</h2>
+    <p>Please, sign in</p>
+    <button class="btn btn-primary" @click="handleLogin">Github
     </button>
-    <div class="text-sm text-red-500" v-if="errorMessage">
-      {{ errorMessage }}
+    <div class="text-sm text-red-500" v-if="error">
+      {{ error }}
     </div>
   </section>
 </template>
 <script setup lang="ts">
-import { signInWithPopup, GithubAuthProvider } from 'firebase/auth';
-
-const auth = useFirebaseAuth()!;
+// import { type Auth } from 'firebase/auth';
+// const nuxtApp = useNuxtApp();
+// const auth = nuxtApp.$auth as Auth;
 const router = useRouter();
-const errorMessage = ref('');
+const { signInWithGitHub } = useFirebaseAuth();
+const loading = ref(false);
+const error = ref<string|null>('');
+const handleLogin = async () => {
+  loading.value = true
+  error.value = null
 
-async function signInWithGithub() {
   try {
-    await signInWithPopup(auth, new GithubAuthProvider())
-  } catch (error) {
-    console.error(error);
-    if (error instanceof Error) errorMessage.value = error?.message || 'Something went wrong';
+    const user = await signInWithGitHub();
+    console.log('User:', user);
+    
+    if (user) {
+      await router.push('/')
+    }
+  } catch (err) {
+    error.value = 'Failed to login with GitHub'
+    console.error(err)
+  } finally {
+    loading.value = false
   }
-  return router.push('/');
 }
-
 definePageMeta({
   title: 'Login',
   description: 'Login to your account',

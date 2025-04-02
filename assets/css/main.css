@@ -1,0 +1,207 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+:root {
+  --main-bg-color: #f5f5f5;
+  --main-text-color: #565656;
+  --primary-color: #50c878;
+  --accent-color: #388c68;
+  --divider-color: 227, 227, 227;
+  --error-color: 204, 0, 0;
+  --valid-color: 80, 200, 120;
+  --valid-text-color: 255, 255, 255;
+  --main-bg-darker: #e4e4e4; 
+  --selected-bg-color: 237, 237, 237;
+  --selected-text-color: var(--main-bg-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --main-bg-color: #3a404d;
+    --main-text-color: #f5f5f5;
+    --primary-color: #50c878;
+    --accent-color: #388c68;
+    --divider-color: 46, 48, 54;
+    --main-bg-darker: #353944; 
+    --selected-bg-color: 136, 133, 119;
+  }
+}
+
+body {
+  background-color: var(--main-bg-color);
+  color: var(--main-text-color);
+  font-family: 'Reddit Mono', monospace;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--primary-color);
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  white-space: nowrap;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+.btn {
+  border-radius: 6px;
+  border-width: 1px;
+  padding: 0.5rem 1rem;
+}
+
+.btn.btn-sm {
+  padding: 1rem 1.5rem;
+}
+
+.btn.btn-primary {
+  /* background: linear-gradient(var(--primary-color), var(--accent-color));
+  border-color: transparent;
+  box-shadow: inset 0px 0px 14px -3px var(--primary-color); */
+  background-color: var(--primary-color);
+  border-color: transparent;
+  color: #fff;
+  /* text-shadow: 0px -1px var(--accent-color); */
+}
+
+.btn.btn-primary:hover {
+  background: none var(--accent-color);
+  cursor: pointer;
+}
+
+.site-wrapper {
+  @apply flex flex-col min-h-screen relative;
+}
+
+.content-wrapper {
+  @apply flex flex-1;
+}
+
+.site-header {
+  @apply flex justify-between mb-[48px] px-4 py-2 fixed top-0 w-full z-100 text-white;
+  background-color: var(--primary-color);
+}
+
+.site-header a,
+.site-header a:focus,
+.site-header a:visited {
+  @apply text-white decoration-0;
+}
+
+.site-header a:hover {
+  text-decoration: none;
+}
+
+.site-header .logo {
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0px -1px var(--accent-color);
+}
+
+#menuToggler {
+  cursor: pointer;
+}
+
+.site-sidebar {
+  background-color: rgba(var(--divider-color));
+  box-shadow: 2px 0 8px rgba(0, 0, 0, .15);
+  height: calc(100dvh - 2rem);
+  padding-top: 45px;
+  position: fixed;
+  transition: width 500ms ease;
+  width: clamp(180px, 200px, 15vw);
+  z-index: 2;   
+}
+
+.site-sidebar.collapsed {
+  width: clamp(42px, 48px, 5vw);
+}
+
+.site-sidebar.collapsed + .site-content {
+  width: clamp(100% - 42px, 100% - 48px, 95vw);
+  margin-left: 42px;
+}
+
+.site-sidebar .sidebar-control {
+  display: flex;
+  justify-content: end;
+  padding: 1rem;
+}
+
+.site-sidebar .sidebar-control i {
+  cursor: pointer;
+}
+
+.site-sidebar .sidebar-content {
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.site-sidebar.collapsed .sidebar-content {
+  margin-left: -100vw;
+}
+
+.sidebar-content li {
+  padding: 1rem 0 0 0;
+}
+
+.sidebar-content li a {
+  color: var(--main-text-color);
+  font-weight: bold;
+  padding: 0 0 1rem 0;
+  text-decoration: none;
+}
+
+.sidebar-content li ul {
+  padding-left: 1.5rem;
+}
+
+.sidebar-content li ul li a {
+  font-weight: normal;
+  font-size: smaller;
+}
+
+.site-content {
+  margin-left: 42px;
+  padding-top: 45px;
+  width: clamp(100% - 42px, 100% - 48px, 85vw);
+}
+
+.site-content .content-control {
+  padding: 0.5rem 1rem;
+}
+
+.site-footer {
+  display: flex;
+  font-size: smaller;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+}
+
+.narrow-centered {
+  margin: auto;
+  width: clamp(200px, 25vw, 50vw);
+}

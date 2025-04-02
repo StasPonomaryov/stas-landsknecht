@@ -1,11 +1,12 @@
-export default defineNuxtRouteMiddleware(async (to, form) => { 
-  const user = await getCurrentUser()
+export default defineNuxtRouteMiddleware(async (to, from) => { 
+  const authStore = useAuthStore()
+  const user = authStore.user
 
-  if (user && to.name === 'login') {
-    return navigateTo('/')
+  if (to.path === '/login') {
+    return
   }
 
-  if (!user && to.name !== 'login') {
+  if (!user) {
     return navigateTo('/login')
   }
 });

@@ -8,7 +8,7 @@
     <div class="sidebar-content">
       <ul>
         <li @click="toggleSidebar">
-          📝 <NuxtLink to="/tasks">Tasks</NuxtLink>
+          📝 <NuxtLink to="#">Tasks</NuxtLink>
           <ul>
             <li>
               <a href="/tasks/add">Add task</a>
@@ -22,16 +22,16 @@
           </ul>
         </li>
         <li @click="toggleSidebar">
-          👨 <NuxtLink to="/clients">Clients</NuxtLink>
+          👨 <NuxtLink to="#">Clients</NuxtLink>
           <ul>
             <li>
-              <NuxtLink to="/clients/add">Add client</NuxtLink>
+              <NuxtLink to="#">Add client</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/clients/edit">Edit client</NuxtLink>
+              <NuxtLink to="#">Edit client</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/clients/remove">Remove client</NuxtLink>
+              <NuxtLink to="#">Remove client</NuxtLink>
             </li>
           </ul>
         </li>

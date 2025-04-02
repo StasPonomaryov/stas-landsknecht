@@ -5,21 +5,25 @@
     </div>
     <div v-if="user" class="user">
       <span class="greeting">Salut, </span>
-      <NuxtLink to="/account"><span class="username">{{ user.displayName ?? user.email }}</span></NuxtLink>
-      <span class="link ml-2" @click="userLogout">❌</span>
+      <NuxtLink to="#"><span class="username">{{ user?.displayName ?? user?.email }}</span></NuxtLink>
+      <span class="link ml-2" @click="handleLogout">❌</span>
     </div>
   </header>
 </template>
 
-<script setup>
-import { signOut } from 'firebase/auth';
+<script setup lang="ts">
+import { useFirebaseAuth } from '~/composables/useFirebaseAuth'
+import { useAuthStore } from '~/stores/auth'
 
-const auth = useFirebaseAuth();
-const user = useCurrentUser();
+const authStore = useAuthStore()
+const { signOutUser } = useFirebaseAuth()
 
-const userLogout = async () => {
-  await signOut(auth);
-  navigateTo('/login');
+const user = computed(() => authStore.user)
+const userName = computed(() => authStore.getUserName())
+
+const handleLogout = async () => {
+  await signOutUser()
+  navigateTo('/login')
 }
 </script>
 

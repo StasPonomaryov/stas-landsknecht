@@ -1,81 +1,50 @@
-<template>
-  <section v-if="user" class="tasks add">
-    <h2>Add task</h2>
-    <div class="grid cards left">
-      <div class="customers-control">
-        <VueForm class="form-widget" @submit.prevent="saveTask">
-
-            <label for="clientName" class="input-label">
-              Name<span class="required">*</span>
-            </label>
-            <TextElement name="title" :native="false" :search="true" />        
-        </VueForm>
-      </div>
-    </div>
-  </section>
-</template>
-
 <script setup lang="ts">
-import { useVuelidate } from '@vuelidate/core';
-import { required, minLength, helpers } from '@vuelidate/validators';
-const clientsStore = useClientsStore();
-const { clients } = storeToRefs(clientsStore);
-const user = useCurrentUser();
-const addedTask = ref('');
-const loading = ref(false);
-const succeed = ref(false);
-const failed = ref('');
-// const getInitialFormData = () => ({
-//   client: '',
-//   title: '',
-//   description: '',
-//   dateStart: new Date().toISOString().split('T')[0],
-//   dateEnd: null,
-//   priceStart: 0,
-//   priceEnd: 0,
-//   hours: 0,
-//   status: 'processing'
-// });
-// const formData = reactive(getInitialFormData());
+import { addTaskFormSchema, type AddTaskFormData, type AddTaskFormErrors } from '~/shared/utils/validators';
+import type { FormError, FormErrorEvent, FormSubmitEvent } from '@nuxt/ui';
+import type { z } from 'zod';
 
-// const resetUserForm = () => Object.assign(formData, getInitialFormData());
+const initialFormData: AddTaskFormData = {
+  title: '',
+};
 
-// const rules = computed(() => {
-//   return {
-//     client: {
-//       required: helpers.withMessage('Client is required', required),
-//       minLength: minLength(4)
-//     },
-//     title: {
-//       required: helpers.withMessage('Title is required', required),
-//       minLength: minLength(4)
-//     },
-//     description: { minLength: minLength(6) },
-//     dateStarted: {
-//       required: helpers.withMessage('Date started is required', required),
-//       date_format: 'yyyy-MM-dd',
-//       minLength: minLength(10)
-//     },
-//     dateEnded: {
-//       date_format: 'yyyy-MM-dd',
-//       minLength: minLength(10)
-//     },
-//     priceStart:{
-//       minLength: minLength(10)
-//     }
-//   }
-// });
+const formData = ref<AddTaskFormData>({ ...initialFormData });
+const formErrors = ref<AddTaskFormErrors>({});
+const statusMessage = ref<string | null>(null);
 
-// const v$ = useVuelidate(rules, formData);
+function onSubmit(event: FormSubmitEvent<unknown>) {
+  statusMessage.value = null;
 
-async function saveTask() {
-  console.log('Task saved');
-  
+  if (!validateFormData()) return;
+  console.log(event);
 }
 
-if (!clients?.value) {
-  clientsStore.fetchUserClients(user.value?.uid);
-}
+const validateFormData = (): boolean => {
+  const result: z.SafeParseReturnType<AddTaskFormData, AddTaskFormData> = addTaskFormSchema.safeParse(formData.value);
+
+  if (!result.success) {
+    formErrors.value = result.error.errors.reduce((acc: AddTaskFormErrors, error: any) => {
+      const key = error.path[0] as keyof AddTaskFormData;
+      acc[key] = error.message;
+      return acc
+    }, {} as AddTaskFormErrors)
+    return false;
+  }
+
+  formErrors.value = {};
+  return true;
+};
 </script>
+
+<template>
+  <div class="max-w-screen-sm mx-auto py-10">
+    <UForm :state="formData" class="p-10 rounded-md space-y-3" @submit="onSubmit" :schema="addTaskFormSchema">
+      <h1>Add task</h1>
+      <UFormField label="Title" name="title" size="lg">
+        <UInput v-model="formData.title" :error="formErrors.title" />
+      </UFormField>
+      <UButton class="mt-3" color="primary" type="submit">Add</UButton>
+    </UForm>
+  </div>
+</template>
 
 <style scoped></style>
