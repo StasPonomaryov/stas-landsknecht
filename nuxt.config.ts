@@ -23,12 +23,12 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       baseUrl: process.env.BASE_URL || 'http://localhost:5000',
-      FIREBASE_API_KEY: "AIzaSyB54d6N49x5sTUeRVk-YQzDYgioNwk0Jyg",
-      FIREBASE_AUTH_DOMAIN: "freelance-stas.firebaseapp.com",
-      FIREBASE_PROJECT_ID: "freelance-stas",
-      FIREBASE_STORAGE_BUCKET: "freelance-stas.appspot.com",
-      FIREBASE_MESSAGING_SENDER_ID: "91083954751",
-      FIREBASE_APP_ID: "1:91083954751:web:066f6ee9325136bd5f768a"
+      firebaseApiKey: '',
+      firebaseAuthDomain: '',
+      firebaseProjectId: '',
+      firebaseStorageBucket: '',
+      firebaseMessagingSenderId: '',
+      firebaseAppId: '',
     },
     app: {}
   },
