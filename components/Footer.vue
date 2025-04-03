@@ -4,7 +4,7 @@
     <div class="stats">
       <!-- <span title="Clients count">👨: {{ clientsStore.clients?.length || clientsLength }};</span> -->
       <!-- <span title="Tasks count">📝: {{ tasksStore.tasks?.length || tasksLength }};</span> -->
-      <span title="User ID">👑: {{ user?.uid }}</span>
+      <span class="hidden md:block" title="User ID">👑: {{ user?.uid }}</span>
     </div>
     <div class="build">1.0.2</div>
   </footer>

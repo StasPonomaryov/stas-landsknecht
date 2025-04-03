@@ -4,8 +4,8 @@
       <NuxtLink to="/">Landsknecht 🏰</NuxtLink>
     </div>
     <div v-if="user" class="user">
-      <span class="greeting">Salut, </span>
-      <NuxtLink to="#"><span class="username">{{ user?.displayName ?? user?.email }}</span></NuxtLink>
+      <span class="hidden md:inline">Salut, </span>
+      <NuxtLink to="#"><span class="username">{{ userName }}</span></NuxtLink>
       <span class="link ml-2" @click="handleLogout">❌</span>
     </div>
   </header>
