@@ -2,27 +2,30 @@ import { defineStore } from 'pinia';
 import { addDoc, collection, deleteDoc, doc, Firestore, getCountFromServer, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import type { NewClient, Client } from '~/types';
 
-const db = (useNuxtApp().$firestore as Firestore);
-const clientsRef = collection(db, 'clients');
-
 export const useClientsStore = defineStore('clientsStore', {
   state: () => ({
     clients: [] as Client[],
     isLoading: false,
   }),
   actions: {
-    async fetchClients() {      
+    async fetchClients() {
+      const db = (useNuxtApp().$firestore as Firestore);
+      const clientsRef = collection(db, 'clients');
       const snapshot = await getDocs(clientsRef);
       this.clients = snapshot.docs.map((doc) => ({ ...doc.data() })) as Client[];
     },
 
     async addClient(client: NewClient, uid: string) {
+      const db = (useNuxtApp().$firestore as Firestore);
+      const clientsRef = collection(db, 'clients');
       const docRef = await addDoc(clientsRef, { ...client, users: [uid] });
 
       this.clients.push({ id: docRef.id, ...client });
     },
 
     async updateClient(id: string, client: Client) {
+      const db = (useNuxtApp().$firestore as Firestore);
+      const clientsRef = collection(db, 'clients');
       const clientRef = doc(clientsRef, client.id);
       await updateDoc(clientRef, client);
 
@@ -33,6 +36,8 @@ export const useClientsStore = defineStore('clientsStore', {
     },
 
     async deleteClient(id: string) {
+      const db = (useNuxtApp().$firestore as Firestore);
+      const clientsRef = collection(db, 'clients');
       const clientRef = doc(clientsRef, id);
       await deleteDoc(clientRef);
 
@@ -40,6 +45,8 @@ export const useClientsStore = defineStore('clientsStore', {
     },
 
     async getClientsCount() {
+      const db = (useNuxtApp().$firestore as Firestore);
+      const clientsRef = collection(db, 'clients');
       const snapshot = await getCountFromServer(clientsRef);
       const count = snapshot.data().count;
 
@@ -50,6 +57,8 @@ export const useClientsStore = defineStore('clientsStore', {
       if (!uid) {
         return this.fetchClients();
       }
+      const db = (useNuxtApp().$firestore as Firestore);
+      const clientsRef = collection(db, 'clients');
       
       const q = query(clientsRef, where("users", "array-contains", uid));
       const snapshot = await getDocs(q);
