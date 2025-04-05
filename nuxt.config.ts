@@ -22,7 +22,7 @@ export default defineNuxtConfig({
   devServer: {
     port: 5000,
   },
-  modules: ['@nuxt/ui', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt',],
+  modules: ['@nuxt/ui', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt', 'nuxt-tiptap-editor'],
   runtimeConfig: {
     public: {
       baseUrl: process.env.BASE_URL || 'http://localhost:5000',

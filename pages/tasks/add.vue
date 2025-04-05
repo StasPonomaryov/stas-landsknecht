@@ -6,6 +6,7 @@ import type { z } from 'zod';
 import { useAuthStore } from '~/stores/auth';
 import { useClientsStore } from '~/stores/clients';
 import { STATUSES } from '~/types';
+import Editor from '~/components/editor.vue';
 
 const authStore = useAuthStore();
 const clientsStore = useClientsStore();
@@ -14,7 +15,7 @@ const user = computed(() => authStore.user);
 const initialFormData: AddTaskFormData = {
   client: '',
   dateStart: new Date().toISOString().split('T')[0],
-  description: '',
+  description: '-',
   hours: 0,
   priceEnd: 0,
   priceStart: 0,
@@ -51,7 +52,7 @@ const validateFormData = (): boolean => {
   return true;
 };
 
-if (user.value && !clientsStore.clients) {
+if (user.value && !clientsStore.clients.length) {
   clientsStore.fetchUserClients(user.value.uid);
 };
 </script>
@@ -102,7 +103,8 @@ if (user.value && !clientsStore.clients) {
             <UInput class="w-full" v-model="formData.title" :error="formErrors.title" />
           </UFormField>
           <UFormField label="Description" name="description" size="lg" class="h-full">
-            <UTextarea class="w-full" v-model="formData.description" autoresize :error="formErrors.description" />
+            <!-- <UTextarea class="w-full" v-model="formData.description" autoresize :error="formErrors.description" /> -->
+             <Editor v-model:content="formData.description" />
           </UFormField>
         </div>
       </div>
