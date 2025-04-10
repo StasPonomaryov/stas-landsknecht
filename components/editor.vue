@@ -77,6 +77,7 @@ watch(() => props.content, (newContent) => {
 <style lang="scss">
 /* Basic editor styles */
 .tiptap {
+
   /* List styles */
   ul,
   ol {

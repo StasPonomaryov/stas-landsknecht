@@ -1,62 +1,3 @@
-<script setup lang="ts">
-import { addTaskFormSchema, type AddTaskFormData, type AddTaskFormErrors } from '~/shared/utils/validators';
-import type { FormError, FormErrorEvent, FormSubmitEvent } from '@nuxt/ui';
-import type { RadioGroupItem, RadioGroupValue } from '@nuxt/ui'
-import type { z } from 'zod';
-import { useAuthStore } from '~/stores/auth';
-import { useClientsStore } from '~/stores/clients';
-import { STATUSES } from '~/types';
-import Editor from '~/components/editor.vue';
-
-const authStore = useAuthStore();
-const clientsStore = useClientsStore();
-const user = computed(() => authStore.user);
-
-const initialFormData: AddTaskFormData = {
-  client: '',
-  dateStart: new Date().toISOString().split('T')[0],
-  description: '-',
-  hours: 0,
-  priceEnd: 0,
-  priceStart: 0,
-  status: 'processing',
-  title: '',
-};
-
-const formData = ref<AddTaskFormData>({ ...initialFormData });
-const formErrors = ref<AddTaskFormErrors>({});
-const statusMessage = ref<string | null>(null);
-const statuses = ref<RadioGroupItem[]>(STATUSES);
-const clients = computed(() => clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || []);
-
-function onSubmit(event: FormSubmitEvent<unknown>) {
-  statusMessage.value = null;
-
-  if (!validateFormData()) return;
-  console.log(event);
-}
-
-const validateFormData = (): boolean => {
-  const result: z.SafeParseReturnType<AddTaskFormData, AddTaskFormData> = addTaskFormSchema.safeParse(formData.value);
-
-  if (!result.success) {
-    formErrors.value = result.error.errors.reduce((acc: AddTaskFormErrors, error: any) => {
-      const key = error.path[0] as keyof AddTaskFormData;
-      acc[key] = error.message;
-      return acc
-    }, {} as AddTaskFormErrors)
-    return false;
-  }
-
-  formErrors.value = {};
-  return true;
-};
-
-if (user.value && !clientsStore.clients.length) {
-  clientsStore.fetchUserClients(user.value.uid);
-};
-</script>
-
 <template>
   <h1>Add task</h1>
   <section v-if="user" class="tasks add">
@@ -112,5 +53,62 @@ if (user.value && !clientsStore.clients.length) {
     </UForm>
   </section>
 </template>
+<script setup lang="ts">
+import { addTaskFormSchema, type AddTaskFormData, type AddTaskFormErrors } from '~/shared/utils/validators';
+import type { FormSubmitEvent } from '@nuxt/ui';
+import type { RadioGroupItem } from '@nuxt/ui'
+import type { z } from 'zod';
+import { useAuthStore } from '~/stores/auth';
+import { useClientsStore } from '~/stores/clients';
+import { STATUSES } from '~/types';
+import Editor from '~/components/editor.vue';
 
+const authStore = useAuthStore();
+const clientsStore = useClientsStore();
+const user = computed(() => authStore.user);
+
+const initialFormData: AddTaskFormData = {
+  client: '',
+  dateStart: new Date().toISOString().split('T')[0],
+  description: '-',
+  hours: 0,
+  priceEnd: 0,
+  priceStart: 0,
+  status: 'processing',
+  title: '',
+};
+
+const formData = ref<AddTaskFormData>({ ...initialFormData });
+const formErrors = ref<AddTaskFormErrors>({});
+const statusMessage = ref<string | null>(null);
+const statuses = ref<RadioGroupItem[]>(STATUSES);
+const clients = computed(() => clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || []);
+
+function onSubmit(event: FormSubmitEvent<unknown>) {
+  statusMessage.value = null;
+
+  if (!validateFormData()) return;
+  console.log(event);
+}
+
+const validateFormData = (): boolean => {
+  const result: z.SafeParseReturnType<AddTaskFormData, AddTaskFormData> = addTaskFormSchema.safeParse(formData.value);
+
+  if (!result.success) {
+    formErrors.value = result.error.errors.reduce((acc: AddTaskFormErrors, error: any) => {
+      const key = error.path[0] as keyof AddTaskFormData;
+      acc[key] = error.message;
+      return acc
+    }, {} as AddTaskFormErrors)
+    return false;
+  }
+
+  formErrors.value = {};
+  return true;
+};
+
+if (user.value && !clientsStore.clients.length) {
+  clientsStore.fetchUserClients(user.value.uid);
+};
+</script>
 <style scoped></style>

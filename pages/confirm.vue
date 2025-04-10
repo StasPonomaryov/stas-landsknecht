@@ -3,7 +3,6 @@
     <p>🔄 Redirecting...</p>
   </section>
 </template>
-
 <script setup lang="ts">
 const router = useRouter();
 const isLoading = ref(true);

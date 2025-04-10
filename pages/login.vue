@@ -10,9 +10,6 @@
   </section>
 </template>
 <script setup lang="ts">
-// import { type Auth } from 'firebase/auth';
-// const nuxtApp = useNuxtApp();
-// const auth = nuxtApp.$auth as Auth;
 const router = useRouter();
 const { signInWithGitHub } = useFirebaseAuth();
 const loading = ref(false);
