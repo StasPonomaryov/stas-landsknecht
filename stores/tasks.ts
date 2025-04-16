@@ -8,6 +8,7 @@ export const useTasksStore = defineStore('tasksStore', {
   }),
   actions: {
     async fetchTasks() {
+      console.log('Fetching tasks, SSR:', process.server);
       const db = (useNuxtApp().$firestore as Firestore);
       const tasksRef = collection(db, 'tasks');
       const snapshot = await getDocs(tasksRef);

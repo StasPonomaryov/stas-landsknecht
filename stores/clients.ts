@@ -9,6 +9,7 @@ export const useClientsStore = defineStore('clientsStore', {
   }),
   actions: {
     async fetchClients() {
+      console.log('Fetching clients, SSR:', process.server);
       const db = (useNuxtApp().$firestore as Firestore);
       const clientsRef = collection(db, 'clients');
       const snapshot = await getDocs(clientsRef);

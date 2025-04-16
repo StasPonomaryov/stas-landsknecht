@@ -29,7 +29,7 @@
 body {
   background-color: var(--main-bg-color);
   color: var(--main-text-color);
-  font-family: 'Reddit Mono', monospace;
+  font-family: 'JetBrainsMono', monospace;
   font-size: 16px;
   line-height: 1.35;
 }
