@@ -8,8 +8,8 @@
       <div v-else-if="errorMessage" class="text-red-500">
         {{ errorMessage }}
       </div>
-      <UForm v-else-if="parsedId || (formData && formData.client)" :state="formData" @submit="onSubmit"
-        :schema="editTaskFormSchema">
+      <!-- Форма редагування завдання -->
+      <UForm v-else-if="parsedId" :state="formData" @submit="onSubmit" :schema="editTaskFormSchema">
         <div class="flex flex-col lg:flex-row gap-4">
           <div class="flex flex-col gap-2 lg:w-1/3">
             <div class="flex flex-col gap-2">
@@ -53,13 +53,13 @@
               <UInput class="w-full" v-model="formData.title" :error="formErrors.title" />
             </UFormField>
             <UFormField label="Description" name="description" size="lg" class="h-full">
-              <!-- <UTextarea class="w-full" v-model="formData.description" autoresize :error="formErrors.description" /> -->
               <Editor v-model:content="formData.description" />
             </UFormField>
           </div>
         </div>
         <UButton class="mt-3" color="primary" type="submit">📝 Edit task</UButton>
       </UForm>
+      <!-- Форма вибору завдання -->
       <UForm v-else :state="selectedTask">
         <div v-if="tasks.length === 0" class="text-gray-500">
           No tasks available.
@@ -89,7 +89,6 @@ import { useClientsStore } from '~/stores/clients';
 import { useAuthStore } from '~/stores/auth';
 import { editTaskFormSchema, type EditTaskFormData, type EditTaskFormErrors } from '~/shared/utils/validators';
 import type { FormSubmitEvent, RadioGroupItem } from '@nuxt/ui';
-import { z } from 'zod';
 import { STATUSES, type Task } from '~/types';
 import { convertStatusToText } from '~/shared/utils';
 
@@ -123,25 +122,25 @@ const statuses = ref<RadioGroupItem[]>(STATUSES);
 
 const tasks = computed(() => {
   const taskList = tasksStore.tasks?.map((task) => ({ label: task.title, value: task.id })) || [];
-  // console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
+  console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
   return taskList;
 });
 const clients = computed(() => {
   const clientList = clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || [];
-  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
+  console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
   return clientList;
 });
 
 const parsedId = computed(() => {
   const id = route.query.id;
   console.log('Parsed ID, SSR:', process.server, 'ID:', id);
-  return id;
+  return id ? id.toString() : null;
 });
 
 useAsyncData(
   'tasks-and-clients',
   async () => {
-    if (!user.value) {
+    if (!user.value || !user.value.uid) {
       errorMessage.value = 'User not authenticated.';
       isLoading.value = false;
       return;
@@ -154,12 +153,12 @@ useAsyncData(
       ]);
     } catch (error) {
       errorMessage.value = 'Failed to load data. Please try again.';
-      console.error(error);
+      console.error('Error in useAsyncData:', error);
     } finally {
       isLoading.value = false;
     }
   },
-  { server: true, lazy: false }
+  { server: false, lazy: true }
 );
 
 const validateFormData = (): boolean => {
@@ -185,15 +184,16 @@ const onSubmit = (event: FormSubmitEvent<unknown>) => {
 };
 
 const onTaskSelect = (value: string) => {
-  // console.log('Task selected via @update:modelValue:', value);
+  console.log('Task selected via @update:modelValue:', value);
   selectedTask.value = {
     label: tasksStore.tasks.find((task) => task.id === value)?.title || '',
     value,
   };
+  updateFormData(value);
 };
 
 const updateFormData = (taskId: string) => {
-  // console.log('Updating form data for task:', taskId);
+  console.log('Updating form data for task:', taskId);
   const task = tasksStore.tasks.find((t) => t.id === taskId);
   if (!task) {
     errorMessage.value = 'Task not found.';
@@ -219,7 +219,7 @@ const updateFormData = (taskId: string) => {
 watch(
   () => selectedTask.value.value,
   (newValue) => {
-    // console.log('Watch triggered, selectedTask.value:', newValue);
+    console.log('Watch triggered, selectedTask.value:', newValue);
     if (newValue) {
       updateFormData(newValue);
     }
@@ -230,7 +230,17 @@ watch(
 watch(
   [() => parsedId.value, () => tasksStore.tasks],
   ([id, tasks]) => {
-    if (!id || !tasks.length) return;
+    if (!id) {
+      // Якщо ID не вказано, очищаємо formData і selectedTask
+      formData.value = { ...initialFormData };
+      selectedTask.value = { label: '', value: '' };
+      return;
+    }
+
+    if (!tasks.length) {
+      errorMessage.value = 'No tasks available.';
+      return;
+    }
 
     const task = tasks.find((t) => t.id === id.toString());
     if (!task) {

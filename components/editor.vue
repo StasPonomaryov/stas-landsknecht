@@ -168,4 +168,10 @@ watch(() => props.content, (newContent) => {
   background-color: var(--gray-1);
   color: var(--black);
 }
+
+.ProseMirror {        
+  min-height: 180px;
+  max-height: 180px;
+  overflow: scroll;
+}
 </style>

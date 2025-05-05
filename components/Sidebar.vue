@@ -14,7 +14,7 @@
               <a href="/tasks/add">Add task</a>
             </li>
             <li>
-              <a href="#">Edit task</a>
+              <a href="/tasks/edit">Edit task</a>
             </li>
             <li>
               <a href="#">Remove task</a>

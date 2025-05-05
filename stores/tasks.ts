@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { addDoc, collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import type { NewTask, Task } from '~/types';
+import { useNuxtApp } from 'nuxt/app';
 
 export const useTasksStore = defineStore('tasksStore', {
   state: () => ({
@@ -39,7 +40,7 @@ export const useTasksStore = defineStore('tasksStore', {
       await updateDoc(taskRef, task);
 
       const index = this.tasks.findIndex((task) => task.id === id)
-      
+
       if (index !== -1) {
         this.tasks[index] = { ...this.tasks[index], ...task }
       }
@@ -53,25 +54,38 @@ export const useTasksStore = defineStore('tasksStore', {
       await setDoc(taskRef, { users: task.users }, { merge: true });
 
       const index = this.tasks.findIndex((task) => task.id === id);
-      
+
       if (index !== -1) {
         this.tasks[index] = { ...this.tasks[index], ...task };
       }
     },
 
     async fetchUserTasks(uid?: string) {
-      const db = (useNuxtApp().$firestore as Firestore);
-      const tasksRef = collection(db, 'tasks');
-
       if (!uid) {
-        return this.fetchTasks();
+        console.error('Invalid user ID');
+        this.tasks = [];
+        return;
       }
 
-      const q = query(tasksRef, where("users", "array-contains", uid));
-      const snapshot = await getDocs(q);
-      this.tasks = snapshot.docs
-        .map((doc) => ({ ...doc.data() }))
-        .sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()) as Task[];
-    }
+      try {
+        const db = useNuxtApp().$firestore as Firestore | undefined;
+        if (!db) {
+          console.error('Firestore instance is not initialized');
+          this.tasks = [];
+          return;
+        }
+
+        console.log('Fetching tasks for UID:', uid);
+        const tasksRef = collection(db, 'tasks');
+        const q = query(tasksRef, where('users', 'array-contains', uid));
+        const snapshot = await getDocs(q);
+        this.tasks = snapshot.docs
+          .map((doc) => ({ ...doc.data() }))
+          .sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()) as Task[];
+      } catch (error) {
+        console.error('Error fetching user tasks:', error);
+        this.tasks = [];
+      }
+    },
   }
 });
