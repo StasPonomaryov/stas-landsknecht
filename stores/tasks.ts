@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { addDoc, collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, deleteDoc } from 'firebase/firestore';
 import type { NewTask, Task } from '~/types';
 import { useNuxtApp } from 'nuxt/app';
 
@@ -69,6 +69,7 @@ export const useTasksStore = defineStore('tasksStore', {
 
       try {
         const db = useNuxtApp().$firestore as Firestore | undefined;
+        
         if (!db) {
           console.error('Firestore instance is not initialized');
           this.tasks = [];
@@ -87,5 +88,30 @@ export const useTasksStore = defineStore('tasksStore', {
         this.tasks = [];
       }
     },
+
+    async removeTask(id: string) {
+      if (!id) {
+        console.error('Invalid task ID');
+        return;
+      }
+
+      console.log('Removing task with ID:', id);
+      try {
+        const db = useNuxtApp().$firestore as Firestore | undefined;
+
+        if (!db) {
+          console.error('Firestore instance is not initialized');
+          return;
+        } 
+
+        console.log('Firestore instance is initialized');
+        const tasksRef = collection(db, 'tasks');
+        const taskRef = doc(tasksRef, id);
+        await deleteDoc(taskRef);
+        console.log('Task removed successfully');
+      } catch (error) {
+        console.error('Error removing task:', error);
+      }
+    }
   }
 });

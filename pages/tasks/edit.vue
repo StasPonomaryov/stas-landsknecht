@@ -8,7 +8,7 @@
       <div v-else-if="errorMessage" class="text-red-500">
         {{ errorMessage }}
       </div>
-      <!-- Форма редагування завдання -->
+
       <UForm v-else-if="parsedId" :state="formData" @submit="onSubmit" :schema="editTaskFormSchema">
         <div class="flex flex-col lg:flex-row gap-4">
           <div class="flex flex-col gap-2 lg:w-1/3">
@@ -59,7 +59,6 @@
         </div>
         <UButton class="mt-3" color="primary" type="submit">📝 Edit task</UButton>
       </UForm>
-      <!-- Форма вибору завдання -->
       <UForm v-else :state="selectedTask">
         <div v-if="tasks.length === 0" class="text-gray-500">
           No tasks available.
