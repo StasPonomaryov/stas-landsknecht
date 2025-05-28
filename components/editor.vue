@@ -35,8 +35,8 @@
 </template>
 
 <script setup>
-import { Markdown } from 'tiptap-markdown'
-import { useEditor } from '@tiptap/vue-3'
+import { Markdown } from 'tiptap-markdown';
+import { watch, onBeforeUnmount } from 'vue';
 
 const props = defineProps(['content']);
 const emit = defineEmits(['update:content']);
@@ -47,31 +47,38 @@ const editor = useEditor({
       class: 'border border-gray-300 bg-white rounded-md p-2 mt-4',
     },
   },
-  content: props.content ?? '', // Початковий вміст може бути HTML або Markdown
+  content: props.content ?? '',
   extensions: [
-    TiptapStarterKit, Markdown
+    TiptapStarterKit,
+    Markdown,
   ],
   onUpdate({ editor }) {
-    const markdown = editor.storage.markdown.getMarkdown(); // Отримуємо Markdown
-    emit('update:content', markdown); // Емітімо Markdown
+    const markdown = editor.storage.markdown.getMarkdown();
+    emit('update:content', markdown);
   },
 });
 
+// Знищення редактора при демонтажі компонента
 onBeforeUnmount(() => {
-  if (editor) {
-    unref(editor).destroy();
+  if (editor.value) {
+    editor.value.destroy();
   }
 });
 
-watch(() => props.content, (newContent) => {
-  if (!editor) return;
+// Спостереження за змінами props.content
+watch(
+  () => props.content,
+  (newContent) => {
+    // Перевірка, чи редактор ініціалізований
+    if (!editor.value) return;
 
-  const currentMarkdown = editor.storage.markdown.getMarkdown();
-  if (currentMarkdown !== newContent) {
-    // Конвертуємо Markdown назад у HTML для редактора
-    editor.commands.setContent(newContent, false);
-  }
-});
+    const currentMarkdown = editor.value.storage?.markdown?.getMarkdown();
+    if (currentMarkdown !== newContent) {
+      editor.value.commands.setContent(newContent, false);
+    }
+  },
+  { immediate: true } // Викликати watch одразу після ініціалізації
+);
 </script>
 
 <style lang="scss">
