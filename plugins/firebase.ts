@@ -13,7 +13,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     messagingSenderId: config.public.firebaseMessagingSenderId,
     appId: config.public.firebaseAppId,
   };
-  console.log('Config', config.FIREBASE_APP_ID);
   
   const app = initializeApp(firebaseConfig);
 

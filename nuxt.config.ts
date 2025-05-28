@@ -26,12 +26,12 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       baseUrl: process.env.BASE_URL || 'http://localhost:5000',
-      firebaseApiKey: '',
+      firebaseApiKey: process.env.FIREBASE_API_KEY,
       firebaseAuthDomain: '',
       firebaseProjectId: '',
       firebaseStorageBucket: '',
       firebaseMessagingSenderId: '',
-      firebaseAppId: '',
+      firebaseAppId: process.env.FIREBASE_APP_ID,
     },
     app: {}
   },
