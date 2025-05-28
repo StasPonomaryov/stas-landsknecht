@@ -54,6 +54,7 @@
   </section>
 </template>
 <script setup lang="ts">
+import { nanoid } from 'nanoid';
 import { addTaskFormSchema, type AddTaskFormData, type AddTaskFormErrors } from '~/shared/utils/validators';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { RadioGroupItem } from '@nuxt/ui'
@@ -62,6 +63,7 @@ import { useAuthStore } from '~/stores/auth';
 import { useClientsStore } from '~/stores/clients';
 import { STATUSES } from '~/types';
 import Editor from '~/components/editor.vue';
+import { convertStatusToNumber } from '~/shared/utils';
 
 const authStore = useAuthStore();
 const clientsStore = useClientsStore();
@@ -70,7 +72,7 @@ const user = computed(() => authStore.user);
 const initialFormData: AddTaskFormData = {
   client: '',
   dateStart: new Date().toISOString().split('T')[0],
-  description: '-',
+  description: '',
   hours: 0,
   priceEnd: 0,
   priceStart: 0,
@@ -84,11 +86,34 @@ const statusMessage = ref<string | null>(null);
 const statuses = ref<RadioGroupItem[]>(STATUSES);
 const clients = computed(() => clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || []);
 
-function onSubmit(event: FormSubmitEvent<unknown>) {
+async function onSubmit(event: FormSubmitEvent<unknown>) {
   statusMessage.value = null;
 
-  if (!validateFormData()) return;
+  if (!validateFormData() || !user.value) return;
   console.log(event);
+
+  const data = {
+    clientId: formData.value.client,
+    ...(formData.value.dateEnd && { end: formData.value.dateEnd }),
+    hours: formData.value.hours || 0,
+    id: nanoid(10),
+    priceStart: formData.value.priceStart || 0,
+    priceEnd: formData.value.priceEnd || 0,
+    start: formData.value.dateStart,
+    status: convertStatusToNumber(formData.value.status),
+    text: formData.value.description,
+    title: formData.value.title,
+    users: [user.value.uid],
+  };
+
+  try {
+    await useTasksStore().addTask(data);
+    statusMessage.value = 'Task added successfully';
+    formData.value = { ...initialFormData };
+  } catch (error) {
+    console.error(error);
+    statusMessage.value = 'Error adding task';
+  }
 }
 
 const validateFormData = (): boolean => {

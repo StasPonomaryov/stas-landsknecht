@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { addDoc, collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, deleteDoc } from 'firebase/firestore';
-import type { NewTask, Task } from '~/types';
+import type { Task } from '~/types';
 import { useNuxtApp } from 'nuxt/app';
 
 export const useTasksStore = defineStore('tasksStore', {
@@ -16,12 +16,30 @@ export const useTasksStore = defineStore('tasksStore', {
       this.tasks = snapshot.docs.map((doc) => ({ ...doc.data() })) as Task[];
     },
 
-    async addTask(task: NewTask) {
-      const db = (useNuxtApp().$firestore as Firestore);
-      const tasksRef = collection(db, 'tasks');
-      const docRef = await addDoc(tasksRef, task);
+    async addTask(task: Task) {
+      if (!task.id) {
+        console.error('Invalid task ID');
+        return;
+      }
 
-      this.tasks.push({ id: docRef.id, ...task });
+      try {
+        const db = (useNuxtApp().$firestore as Firestore);
+
+        if (!db) {
+          console.error('Firestore instance is not initialized');
+          this.tasks = [];
+          return;
+        }
+
+        console.log('Firestore instance is initialized');
+        const tasksRef = doc(db, 'tasks', task.id);
+        await setDoc(tasksRef, task);
+        console.log('Task was created');        
+        this.tasks.push(task);
+      } catch (error) {
+        console.error('Error adding task:', error);
+        throw error;
+      }
     },
 
     async getTasksCount() {
@@ -69,7 +87,7 @@ export const useTasksStore = defineStore('tasksStore', {
 
       try {
         const db = useNuxtApp().$firestore as Firestore | undefined;
-        
+
         if (!db) {
           console.error('Firestore instance is not initialized');
           this.tasks = [];
@@ -86,6 +104,7 @@ export const useTasksStore = defineStore('tasksStore', {
       } catch (error) {
         console.error('Error fetching user tasks:', error);
         this.tasks = [];
+        throw error;
       }
     },
 
@@ -102,7 +121,7 @@ export const useTasksStore = defineStore('tasksStore', {
         if (!db) {
           console.error('Firestore instance is not initialized');
           return;
-        } 
+        }
 
         console.log('Firestore instance is initialized');
         const tasksRef = collection(db, 'tasks');
@@ -111,6 +130,7 @@ export const useTasksStore = defineStore('tasksStore', {
         console.log('Task removed successfully');
       } catch (error) {
         console.error('Error removing task:', error);
+        throw error;
       }
     }
   }
