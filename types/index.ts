@@ -12,10 +12,11 @@ export type Client = NewClient & {
   id: string;
 }
 
-export type NewTask = {
+export type Task = {
   clientId: string;
   end?: string;
   hours: number;
+  id: string;
   priceEnd?: number;
   priceStart: number;
   start: string;
@@ -23,8 +24,4 @@ export type NewTask = {
   text?: string;
   title: string;
   users: string[];
-}
-
-export type Task = NewTask & {
-  id: string;
 }
