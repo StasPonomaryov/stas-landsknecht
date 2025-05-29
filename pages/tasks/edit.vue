@@ -133,6 +133,8 @@ const clients = computed(() => {
 const parsedId = computed(() => {
   const id = route.query.id;
   console.log('Parsed ID, SSR:', process.server, 'ID:', id);
+  if (id) isLoading.value = false;
+  
   return id ? id.toString() : null;
 });
 
