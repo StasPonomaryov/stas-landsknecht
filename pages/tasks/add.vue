@@ -51,6 +51,7 @@
       </div>
       <UButton class="mt-3" color="primary" type="submit">📝 Add task</UButton>
     </UForm>
+    <div class="mt-3" v-if="statusMessage">{{ statusMessage }}</div>
   </section>
 </template>
 <script setup lang="ts">
@@ -107,9 +108,10 @@ async function onSubmit(event: FormSubmitEvent<unknown>) {
   };
 
   try {
-    await useTasksStore().addTask(data);
+    await useTasksStore().addTask(data);    
     statusMessage.value = 'Task added successfully';
     formData.value = { ...initialFormData };
+    await useTasksStore().fetchUserTasks(user.value.uid);
   } catch (error) {
     console.error(error);
     statusMessage.value = 'Error adding task';

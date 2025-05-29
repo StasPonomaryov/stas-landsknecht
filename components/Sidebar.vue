@@ -8,7 +8,7 @@
     <div class="sidebar-content">
       <ul>
         <li @click="toggleSidebar">
-          📝 <NuxtLink to="#">Tasks</NuxtLink>
+          📝 <NuxtLink to="/tasks">Tasks</NuxtLink>
           <ul>
             <li>
               <a href="/tasks/add">Add task</a>
