@@ -10,7 +10,7 @@
     <div v-if="user" class="tasks">
       <div class="w-full py-5 mx-auto" v-if="tasks.length">
         <ClientOnly>
-          <TasksTable :data="tasks" :columns="columns" />
+          <TasksTable :data="tasks" :columns="columns" @removeSelected="onRemoveTask" />
         </ClientOnly>
       </div>
       <div v-else class="">Waiting for data...</div>
@@ -81,6 +81,7 @@ useAsyncData(
         tasksStore.tasks.length ? Promise.resolve() : tasksStore.fetchUserTasks(user.value.uid),
         clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchClients(),
       ]);
+      errorMessage.value = null;
     } catch (error) {
       errorMessage.value = 'Failed to load data. Please try again.';
       console.error('Error in useAsyncData:', error);
@@ -91,29 +92,25 @@ useAsyncData(
   { server: false, lazy: true }
 );
 
-const onTaskSelect = (value: string) => {
-  console.log('Task selected via @update:modelValue:', value);
-  selectedTask.value = {
-    label: tasksStore.tasks.find((task) => task.id === value)?.title || '',
-    value,
-  };
-  taskToRemove.value = tasksStore.tasks.find((task) => task.id === value) || null;
-
-  if (taskToRemove.value?.clientId) {
-    const client = clients.value.find((client) => client.value === taskToRemove.value?.clientId);
-    if (client) {
-      clientName.value = client.label;
+const onRemoveTask = (taskIds: string[]) => {
+  if (taskIds.length === 1) {
+    const task = tasksStore.tasks.find(t => t.id === taskIds[0]);
+    if (task) {
+      selectedTask.value = {
+        label: task.title,
+        value: task.id
+      };
+      taskToRemove.value = task;
+      openModal.value = true;
     }
-  }
-};
+  } else {
+    selectedTask.value = {
+      label: `${taskIds.length} tasks`,
+      value: taskIds.join(', ')
+    };
 
-const onRemoveTask = async () => {
-  if (!taskToRemove.value) {
-    errorMessage.value = 'Task not selected.';
-    return;
+    openModal.value = true;
   }
-
-  openModal.value = true;
 };
 
 const confirmRemoveTask = async () => {
@@ -136,6 +133,12 @@ const confirmRemoveTask = async () => {
     console.error('Error in confirmRemoveTask:', error);
   }
 };
+
+onMounted(() => {
+  if (tasksStore.tasks.length && clientsStore.clients.length) {
+    isLoading.value = false;
+  }
+});
 
 useHead({
   title: 'Tasks table - Landsknecht'

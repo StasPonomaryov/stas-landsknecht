@@ -5,7 +5,7 @@
         :model-value="table.getColumn('text')?.getFilterValue() as string"
         @update:model-value="table.getColumn('text')?.setFilterValue($event)" />
       <div class="flex items-center space-x-2" v-if="table.getFilteredSelectedRowModel().rows.length > 0">
-        <Button variant="destructive">
+        <Button variant="destructive" @click="emitRemoveSelected">
           <TrashIcon class="w-4 h-4" />Remove
         </Button>
         <Button v-if="table.getFilteredSelectedRowModel().rows.length === 1" variant="outline" @click="navigateToTask(table.getFilteredSelectedRowModel().rows[0].original.id)">
@@ -73,11 +73,17 @@ const props = defineProps<{
   columns: ColumnDef<Task, any>[]
   data: Task[]
 }>();
+const emit = defineEmits(['removeSelected']);
 
 const router = useRouter();
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const rowSelection = ref({});
+
+const emitRemoveSelected = () => {
+  const selectedRows = table.getFilteredSelectedRowModel().rows;
+  emit('removeSelected', selectedRows.map(row => row.original.id));
+};
 
 const table = useVueTable({
   get data() { return props.data },
