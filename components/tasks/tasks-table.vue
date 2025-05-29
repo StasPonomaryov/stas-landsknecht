@@ -8,7 +8,7 @@
         <Button variant="destructive">
           <TrashIcon class="w-4 h-4" />Remove
         </Button>
-        <Button v-if="table.getFilteredSelectedRowModel().rows.length === 1" variant="outline">
+        <Button v-if="table.getFilteredSelectedRowModel().rows.length === 1" variant="outline" @click="navigateToTask(table.getFilteredSelectedRowModel().rows[0].original.id)">
           <Pencil class="w-4 h-4" />Edit
         </Button>
       </div>
@@ -46,7 +46,7 @@
   </div>
 </template>
 
-<script setup lang="ts" generic="TData, TValue">
+<script setup lang="ts">
 import type { ColumnDef, SortingState, ColumnFiltersState, } from '@tanstack/vue-table'
 import {
   Table,
@@ -56,7 +56,6 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
-
 import {
   FlexRender,
   getCoreRowModel,
@@ -71,10 +70,11 @@ import { Pencil, TrashIcon } from 'lucide-vue-next';
 import type { Task } from '~/types';
 
 const props = defineProps<{
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<Task, any>[]
+  data: Task[]
 }>();
 
+const router = useRouter();
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const rowSelection = ref({});
@@ -97,4 +97,7 @@ const table = useVueTable({
     get rowSelection() { return rowSelection.value },
   },
 });
+const navigateToTask = (taskId: string) => {
+  router.push(`/tasks/edit?id=${taskId}`);
+};
 </script>
