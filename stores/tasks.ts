@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { addDoc, collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, deleteDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, deleteDoc, writeBatch } from 'firebase/firestore';
 import type { Task } from '~/types';
 import { useNuxtApp } from 'nuxt/app';
 
@@ -109,13 +109,13 @@ export const useTasksStore = defineStore('tasksStore', {
       }
     },
 
-    async removeTask(id: string) {
-      if (!id) {
+    async removeTask(taskIds: string[]) {
+      if (!taskIds.length) {
         console.error('Invalid task ID');
         return;
       }
 
-      console.log('Removing task with ID:', id);
+      console.log('Removing tasks with IDs:', taskIds);
       try {
         const db = useNuxtApp().$firestore as Firestore | undefined;
 
@@ -125,10 +125,21 @@ export const useTasksStore = defineStore('tasksStore', {
         }
 
         console.log('Firestore instance is initialized');
+
+        const batch = writeBatch(db);
         const tasksRef = collection(db, 'tasks');
-        const taskRef = doc(tasksRef, id);
-        await deleteDoc(taskRef);
-        console.log('Task removed successfully');
+
+        taskIds.forEach(id => {
+          const taskRef = doc(tasksRef, id);
+          batch.delete(taskRef);
+        });
+
+        await batch.commit();
+
+        this.tasks = this.tasks.filter(task => !taskIds.includes(task.id));
+
+        console.log(`${taskIds.length} tasks removed successfully`);
+        return true;
       } catch (error) {
         console.error('Error removing task:', error);
         throw error;

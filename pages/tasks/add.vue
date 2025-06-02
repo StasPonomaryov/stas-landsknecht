@@ -51,7 +51,9 @@
       </div>
       <UButton class="mt-3" color="primary" type="submit">📝 Add task</UButton>
     </UForm>
-    <div class="mt-3" v-if="statusMessage">{{ statusMessage }}</div>
+    <div class="mt-3" v-if="statusMessage">
+      <UAlert :color="statusMessage.variant" :description=" statusMessage.text" />
+    </div>
   </section>
 </template>
 <script setup lang="ts">
@@ -83,7 +85,7 @@ const initialFormData: AddTaskFormData = {
 
 const formData = ref<AddTaskFormData>({ ...initialFormData });
 const formErrors = ref<AddTaskFormErrors>({});
-const statusMessage = ref<string | null>(null);
+const statusMessage = ref<{ text: string, variant: "success" | "error" } | null>(null);
 const statuses = ref<RadioGroupItem[]>(STATUSES);
 const clients = computed(() => clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || []);
 
@@ -109,12 +111,14 @@ async function onSubmit(event: FormSubmitEvent<unknown>) {
 
   try {
     await useTasksStore().addTask(data);    
-    statusMessage.value = 'Task added successfully';
     formData.value = { ...initialFormData };
     await useTasksStore().fetchUserTasks(user.value.uid);
+    setTimeout(() => {
+      statusMessage.value = { text: 'Task added successfully', variant: 'success' };
+    }, 3000);
   } catch (error) {
     console.error(error);
-    statusMessage.value = 'Error adding task';
+    statusMessage.value = { text: 'Error adding task', variant: 'error' };
   }
 }
 

@@ -159,7 +159,7 @@ const confirmRemoveTask = async () => {
 
   try {
     openModal.value = false;
-    await tasksStore.removeTask(taskToRemove.value.id);
+    await tasksStore.removeTask([taskToRemove.value.id]);
     selectedTask.value = { label: '', value: '' };
     taskToRemove.value = null;
     succeed.value = true;

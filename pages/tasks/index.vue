@@ -49,7 +49,7 @@ const errorMessage = ref<string | null>(null);
 const openModal = ref(false);
 const succeed = ref(false);
 const selectedTask = ref<{ label: string; value: string }>({ label: '', value: '' });
-const taskToRemove = ref<Task | null>(null);
+const tasksToRemove = ref<Task[] | null>(null);
 const clientName = ref('');
 
 defineShortcuts({
@@ -100,7 +100,7 @@ const onRemoveTask = (taskIds: string[]) => {
         label: task.title,
         value: task.id
       };
-      taskToRemove.value = task;
+      tasksToRemove.value = [task];
       openModal.value = true;
     }
   } else {
@@ -108,26 +108,30 @@ const onRemoveTask = (taskIds: string[]) => {
       label: `${taskIds.length} tasks`,
       value: taskIds.join(', ')
     };
-
+    tasksToRemove.value = tasksStore.tasks.filter((task) => taskIds.includes(task.id));
     openModal.value = true;
   }
 };
 
 const confirmRemoveTask = async () => {
-  if (!taskToRemove.value) {
+  if (!tasksToRemove.value) {
     errorMessage.value = 'Task not selected.';
     return;
   }
 
   try {
-    openModal.value = false;
-    await tasksStore.removeTask(taskToRemove.value.id);
-    selectedTask.value = { label: '', value: '' };
-    taskToRemove.value = null;
-    succeed.value = true;
-    setTimeout(() => {
-      succeed.value = false;
-    }, 3000);
+    const success = await tasksStore.removeTask(tasksToRemove.value.map((task) => task.id));
+
+    if (success) {
+      // tasksStore.tasks = tasksStore.tasks.filter(task => task.id !== taskToRemove.value?.id);
+      openModal.value = false;
+      selectedTask.value = { label: '', value: '' };
+      tasksToRemove.value = null;
+      succeed.value = true;
+      setTimeout(() => {
+        succeed.value = false;
+      }, 3000);
+    }
   } catch (error) {
     errorMessage.value = 'Failed to remove task. Please try again.';
     console.error('Error in confirmRemoveTask:', error);

@@ -82,7 +82,8 @@ const rowSelection = ref({});
 
 const emitRemoveSelected = () => {
   const selectedRows = table.getFilteredSelectedRowModel().rows;
-  emit('removeSelected', selectedRows.map(row => row.original.id));
+  emit('removeSelected', selectedRows.map((row) => row.original.id));
+  table.resetRowSelection();
 };
 
 const table = useVueTable({
