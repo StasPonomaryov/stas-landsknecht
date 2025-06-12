@@ -57,7 +57,8 @@
             </UFormField>
           </div>
         </div>
-        <UButton class="mt-3" color="primary" type="submit">📝 Edit task</UButton>
+        <UButton class="mt-3 mr-3" color="primary" type="submit">📝 Edit task</UButton>
+        <UButton class="mt-3" color="neutral" @click="$router.back()">Cancel</UButton>
       </UForm>
       <UForm v-else :state="selectedTask">
         <div v-if="tasks.length === 0" class="text-gray-500">

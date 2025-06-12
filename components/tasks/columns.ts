@@ -1,8 +1,8 @@
 import { h } from 'vue';
 import type { ColumnDef } from "@tanstack/vue-table";
 import { format } from 'date-fns/format';
-import { ArrowUpDown, ChevronDown } from 'lucide-vue-next';
-import { getExcerpt, parseOrderStatus } from "~/lib/utils";
+import { ArrowUpDown } from 'lucide-vue-next';
+import { getExcerpt } from "~/lib/utils";
 import type { Task } from "~/types";
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,11 +14,13 @@ export const columns: ColumnDef<Task>[] = [
       'modelValue': table.getIsAllPageRowsSelected(),
       'onUpdate:modelValue': (value: boolean | "indeterminate") => table.toggleAllPageRowsSelected(!!value),
       'ariaLabel': 'Select all',
+      'class': 'bg-white'
     }),
     cell: ({ row }) => h(Checkbox, {
       'modelValue': row.getIsSelected(),
       'onUpdate:modelValue': (value: boolean | "indeterminate") => row.toggleSelected(!!value),
       'ariaLabel': 'Select row',
+      'class': 'bg-white'
     }),
     enableSorting: false,
     enableHiding: false,
@@ -119,21 +121,21 @@ export const columns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: 'status',
+    accessorKey: 'clientName',
     header: ({ column }) => {
       return h(Button, {
         variant: 'ghost',
         class: 'font-bold text-sm w-[90px]',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
       },
-        () => ['Status', h(ArrowUpDown, { class: 'h-4 w-4' })]
+        () => ['Client', h(ArrowUpDown, { class: 'h-4 w-4' })]
       )
     },
     cell: ({ row }) => {
-      const statusRaw: string = row.getValue('status')
-      let status = parseOrderStatus(Number(statusRaw))
+      const clientRaw: string = row.getValue('clientName')
+      let client = clientRaw;
 
-      return h('div', { class: 'text-left font-medium' }, status)
+      return h('div', { class: 'text-left font-medium' }, client)
     },
   },
 ]

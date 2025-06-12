@@ -50,7 +50,6 @@ const openModal = ref(false);
 const succeed = ref(false);
 const selectedTask = ref<{ label: string; value: string }>({ label: '', value: '' });
 const tasksToRemove = ref<Task[] | null>(null);
-const clientName = ref('');
 
 defineShortcuts({
   o: () => openModal.value = !openModal.value
@@ -59,12 +58,13 @@ defineShortcuts({
 const tasks = computed(() => {
   const taskList = tasksStore.tasks;
   console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
-  return taskList;
-});
-const clients = computed(() => {
-  const clientList = clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || [];
-  console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
-  return clientList;
+
+  const tasksWithClients = taskList.map((task) => {
+    const client = clientsStore.clients.find((client) => client.id === task.clientId);
+    return { ...task, clientName: client?.name || '' };
+  });
+
+  return tasksWithClients;
 });
 
 useAsyncData(

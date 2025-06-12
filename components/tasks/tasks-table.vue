@@ -25,7 +25,7 @@
       <TableBody>
         <template v-if="table.getRowModel().rows?.length">
           <TableRow v-for="row in table.getRowModel().rows" :key="row.id"
-            :data-state="row.getIsSelected() ? 'selected' : undefined">
+            :data-state="row.getIsSelected() ? 'selected' : undefined" :class="rowColor(row.original.status)">
             <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
               <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
             </TableCell>
@@ -106,5 +106,18 @@ const table = useVueTable({
 });
 const navigateToTask = (taskId: string) => {
   router.push(`/tasks/edit?id=${taskId}`);
+};
+const rowColor = (status: any) => {
+  const color = 'bg-transparent';
+  switch (status) {
+    case 0:
+      return 'bg-red-200';
+    case 1:
+      return 'bg-green-200';      
+    case 2:
+      return 'bg-yellow-200';
+    default:
+      return color;
+  }  
 };
 </script>
