@@ -25,3 +25,9 @@ export type Task = {
   title: string;
   users: string[];
 }
+
+export type TasksChart = {
+  clientId?: string;
+  count: number;
+  month?: string;
+}
