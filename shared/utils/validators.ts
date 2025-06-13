@@ -13,7 +13,7 @@ export const addTaskFormSchema = z.object({
   title: z.string({ required_error: 'Title is required '}).min(5, 'Title is too short').trim(),
 });
 
-export const editTaskFormSchema = addTaskFormSchema.partial();
+export const editTaskFormSchema = addTaskFormSchema;
 
 export type AddTaskFormData = z.infer<typeof addTaskFormSchema>;
 export type AddTaskFormErrors = Partial<Record<keyof AddTaskFormData, string>>;

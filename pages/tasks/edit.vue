@@ -73,6 +73,9 @@
           </div>
         </div>
       </UForm>
+      <div class="mt-3" v-if="statusMessage">
+        <UAlert :color="statusMessage.variant" :description="statusMessage.text" />
+      </div>
     </section>
     <div v-else class="text-red-500">
       Please log in to edit tasks.
@@ -90,7 +93,7 @@ import { useAuthStore } from '~/stores/auth';
 import { editTaskFormSchema, type EditTaskFormData, type EditTaskFormErrors } from '~/shared/utils/validators';
 import type { FormSubmitEvent, RadioGroupItem } from '@nuxt/ui';
 import { STATUSES, type Task } from '~/types';
-import { convertStatusToText } from '~/shared/utils';
+import { convertStatusToNumber, convertStatusToText } from '~/shared/utils';
 
 const authStore = useAuthStore();
 const tasksStore = useTasksStore();
@@ -103,6 +106,7 @@ const user = computed(() => {
 });
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
+const statusMessage = ref<{ text: string, variant: "success" | "error" } | null>(null);
 
 const initialFormData: EditTaskFormData = {
   client: '',
@@ -135,7 +139,7 @@ const parsedId = computed(() => {
   const id = route.query.id;
   console.log('Parsed ID, SSR:', process.server, 'ID:', id);
   if (id) isLoading.value = false;
-  
+
   return id ? id.toString() : null;
 });
 
@@ -176,13 +180,39 @@ const validateFormData = (): boolean => {
   return true;
 };
 
-const onSubmit = (event: FormSubmitEvent<unknown>) => {
+const onSubmit = async (event: FormSubmitEvent<unknown>) => {
   errorMessage.value = null;
-  if (!validateFormData()) {
-    errorMessage.value = 'Please fix the form errors.';
-    return;
-  }
+
+  if (!validateFormData() || !user.value) return;
   console.log('Form submitted:', event);
+
+  const taskId = parsedId.value ?? selectedTask.value.value;
+  const data = {
+    clientId: formData.value.client,
+    ...(formData.value.dateStart && { end: formData.value.dateStart }),
+    ...(formData.value.dateEnd && { end: formData.value.dateEnd }),
+    hours: formData.value.hours || 0,
+    id: taskId,
+    priceStart: formData.value.priceStart || 0,
+    priceEnd: formData.value.priceEnd || 0,
+    start: formData.value.dateStart,
+    status: convertStatusToNumber(formData.value.status ?? 'processing'),
+    text: formData.value.description,
+    title: formData.value.title,
+    users: [user.value?.uid],
+  };
+
+  try {
+    await useTasksStore().updateTask(taskId, data);
+    formData.value = { ...initialFormData };
+    await useTasksStore().fetchUserTasks(user.value?.uid);
+    setTimeout(() => {
+      statusMessage.value = { text: 'Task edited successfully', variant: 'success' };
+    }, 3000);
+  } catch (error) {
+    console.error(error);
+    statusMessage.value = { text: 'Error editing task', variant: 'error' };
+  }
 };
 
 const onTaskSelect = (value: string) => {
@@ -233,7 +263,6 @@ watch(
   [() => parsedId.value, () => tasksStore.tasks],
   ([id, tasks]) => {
     if (!id) {
-      // Якщо ID не вказано, очищаємо formData і selectedTask
       formData.value = { ...initialFormData };
       selectedTask.value = { label: '', value: '' };
       return;

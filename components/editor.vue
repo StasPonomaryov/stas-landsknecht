@@ -58,18 +58,15 @@ const editor = useEditor({
   },
 });
 
-// Знищення редактора при демонтажі компонента
 onBeforeUnmount(() => {
   if (editor.value) {
     editor.value.destroy();
   }
 });
 
-// Спостереження за змінами props.content
 watch(
   () => props.content,
   (newContent) => {
-    // Перевірка, чи редактор ініціалізований
     if (!editor.value) return;
 
     const currentMarkdown = editor.value.storage?.markdown?.getMarkdown();
@@ -77,7 +74,7 @@ watch(
       editor.value.commands.setContent(newContent, false);
     }
   },
-  { immediate: true } // Викликати watch одразу після ініціалізації
+  { immediate: true } 
 );
 </script>
 

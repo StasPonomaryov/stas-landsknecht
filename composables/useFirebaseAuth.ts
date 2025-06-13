@@ -12,7 +12,7 @@ export const useFirebaseAuth = () => {
   const signInWithGitHub = async (): Promise<User | null> => {
     if (!authStore) {
       console.warn('Pinia store is not ready yet. Waiting...')
-      await new Promise(resolve => setTimeout(resolve, 100)) // Неблокуюча затримка
+      await new Promise(resolve => setTimeout(resolve, 100)) 
       authStore = useAuthStore()
     }
 
