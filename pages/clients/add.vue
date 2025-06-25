@@ -15,7 +15,7 @@
           </UFormField>
         </div>
       </div>
-      <UButton class="mt-3" color="primary" type="submit">📝 Add client</UButton>
+      <UButton class="mt-3" color="primary" type="submit">👨 Add client</UButton>
     </UForm>
     <div class="mt-3" v-if="statusMessage">
       <UAlert :color="statusMessage.variant" :description="statusMessage.text" />

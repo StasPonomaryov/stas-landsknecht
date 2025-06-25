@@ -11,13 +11,13 @@
           📝 <NuxtLink to="/tasks">Tasks</NuxtLink>
           <ul>
             <li>
-              <a href="/tasks/add">Add task</a>
+              <NuxtLink to="/tasks/add">Add task</NuxtLink>
             </li>
             <li>
-              <a href="/tasks/edit">Edit task</a>
+              <NuxtLink to="/tasks/edit">Edit task</NuxtLink>
             </li>
             <li>
-              <a href="/tasks/remove">Remove task</a>
+              <NuxtLink to="/tasks/remove">Remove task</NuxtLink>
             </li>
           </ul>
         </li>
@@ -28,7 +28,7 @@
               <NuxtLink to="/clients/add">Add client</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="#">Edit client</NuxtLink>
+              <NuxtLink to="/clients/edit">Edit client</NuxtLink>
             </li>
             <li>
               <NuxtLink to="/clients/remove">Remove client</NuxtLink>
