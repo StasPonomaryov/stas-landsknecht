@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { addDoc, collection, deleteDoc, doc, Firestore, getCountFromServer, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
 import type { NewClient, Client } from '~/types';
 import { useNuxtApp } from 'nuxt/app';
 
@@ -17,12 +17,31 @@ export const useClientsStore = defineStore('clientsStore', {
       this.clients = snapshot.docs.map((doc) => ({ ...doc.data() })) as Client[];
     },
 
-    async addClient(client: NewClient, uid: string) {
-      const db = (useNuxtApp().$firestore as Firestore);
-      const clientsRef = collection(db, 'clients');
-      const docRef = await addDoc(clientsRef, { ...client, users: [uid] });
+    async addClient(client: Client) {
+      if (!client.id) {
+        console.error('Invalid client ID');
+        return;
+      }
 
-      this.clients.push({ id: docRef.id, ...client });
+      try {
+        const db = (useNuxtApp().$firestore as Firestore);
+
+        if (!db) {
+          console.error('Firestore instance is not initialized');
+          this.clients = [];
+          return;
+        }
+
+        console.log('Firestore instance is initialized');
+        const clientsRef = doc(db, 'clients', client.id);
+        await setDoc(clientsRef, client);
+        console.log('Client was created');
+        await this.fetchUserClients(client.users[0]);
+        this.clients.push(client);
+      } catch (error) {
+        console.error('Error adding client:', error);
+        throw error;
+      }
     },
 
     async updateClient(id: string, client: Client) {

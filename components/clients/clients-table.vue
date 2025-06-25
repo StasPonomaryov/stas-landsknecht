@@ -2,8 +2,8 @@
   <div class="rounded-md">
     <div class="flex items-center justify-between py-4">
       <UInput class="w-full max-w-lg" placeholder="Filter by description..."
-        :model-value="table.getColumn('text')?.getFilterValue() as string"
-        @update:model-value="table.getColumn('text')?.setFilterValue($event)" />
+        :model-value="table.getColumn('description')?.getFilterValue() as string"
+        @update:model-value="table.getColumn('description')?.setFilterValue($event)" />
       <div class="flex items-center space-x-2" v-if="table.getFilteredSelectedRowModel().rows.length > 0">
         <Button variant="destructive" @click="emitRemoveSelected">
           <TrashIcon class="w-4 h-4" />Remove

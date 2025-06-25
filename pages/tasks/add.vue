@@ -6,7 +6,8 @@
         <div class="flex flex-col gap-2 lg:w-1/3">
           <div class="flex flex-col gap-2">
             <UFormField label="Client" name="client" size="lg" required>
-              <UInputMenu class="w-full" v-model="formData.client" :items="clients" value-key="value" :error="formErrors.client" />
+              <UInputMenu class="w-full" v-model="formData.client" :items="clients" value-key="value"
+                :error="formErrors.client" />
             </UFormField>
           </div>
           <div class="flex gap-2">
@@ -45,14 +46,14 @@
           </UFormField>
           <UFormField label="Description" name="description" size="lg" class="h-full">
             <!-- <UTextarea class="w-full" v-model="formData.description" autoresize :error="formErrors.description" /> -->
-             <Editor v-model:content="formData.description" />
+            <Editor v-model:content="formData.description" />
           </UFormField>
         </div>
       </div>
       <UButton class="mt-3" color="primary" type="submit">📝 Add task</UButton>
     </UForm>
     <div class="mt-3" v-if="statusMessage">
-      <UAlert :color="statusMessage.variant" :description=" statusMessage.text" />
+      <UAlert :color="statusMessage.variant" :description="statusMessage.text" />
     </div>
   </section>
 </template>
@@ -67,6 +68,8 @@ import { useClientsStore } from '~/stores/clients';
 import { STATUSES } from '~/types';
 import Editor from '~/components/editor.vue';
 import { convertStatusToNumber } from '~/shared/utils';
+import { computed, ref } from 'vue';
+import { useTasksStore } from '~/stores/tasks';
 
 const authStore = useAuthStore();
 const clientsStore = useClientsStore();
@@ -110,7 +113,7 @@ async function onSubmit(event: FormSubmitEvent<unknown>) {
   };
 
   try {
-    await useTasksStore().addTask(data);    
+    await useTasksStore().addTask(data);
     formData.value = { ...initialFormData };
     await useTasksStore().fetchUserTasks(user.value.uid);
     setTimeout(() => {

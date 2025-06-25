@@ -25,13 +25,13 @@
           👨 <NuxtLink to="/clients">Clients</NuxtLink>
           <ul>
             <li>
-              <NuxtLink to="#">Add client</NuxtLink>
+              <NuxtLink to="/clients/add">Add client</NuxtLink>
             </li>
             <li>
               <NuxtLink to="#">Edit client</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="#">Remove client</NuxtLink>
+              <NuxtLink to="/clients/remove">Remove client</NuxtLink>
             </li>
           </ul>
         </li>

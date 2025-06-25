@@ -72,6 +72,7 @@ import { useTasksStore } from '~/stores/tasks';
 import { useClientsStore } from '~/stores/clients';
 import { convertStatusToText } from '~/shared/utils';
 import type { Task } from '~/types';
+import { computed, defineShortcuts, ref, useAsyncData, useHead } from '#imports';
 
 const authStore = useAuthStore();
 const tasksStore = useTasksStore();
@@ -164,7 +165,7 @@ const confirmRemoveTask = async () => {
     taskToRemove.value = null;
     succeed.value = true;
     setTimeout(() => {
-      succeed.value = false;      
+      succeed.value = false;
     }, 3000);
   } catch (error) {
     errorMessage.value = 'Failed to remove task. Please try again.';
