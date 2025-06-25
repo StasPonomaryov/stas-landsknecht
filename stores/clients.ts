@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-import { addDoc, collection, deleteDoc, doc, Firestore, getCountFromServer, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, Firestore, getCountFromServer, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
 import type { NewClient, Client } from '~/types';
+import { useNuxtApp } from 'nuxt/app';
 
 export const useClientsStore = defineStore('clientsStore', {
   state: () => ({
@@ -60,10 +61,47 @@ export const useClientsStore = defineStore('clientsStore', {
       }
       const db = (useNuxtApp().$firestore as Firestore);
       const clientsRef = collection(db, 'clients');
-      
+
       const q = query(clientsRef, where("users", "array-contains", uid));
       const snapshot = await getDocs(q);
       this.clients = snapshot.docs.map((doc) => ({ ...doc.data() })) as Client[];
     },
-  }  
+
+    async removeClient(clientIds: string[]) {
+      if (!clientIds.length) {
+        console.error('Invalid client ID');
+        return;
+      }
+
+      console.log('Removing clients with IDs:', clientIds);
+      try {
+        const db = useNuxtApp().$firestore as Firestore | undefined;
+
+        if (!db) {
+          console.error('Firestore instance is not initialized');
+          return;
+        }
+
+        console.log('Firestore instance is initialized');
+
+        const batch = writeBatch(db);
+        const clientsRef = collection(db, 'clients');
+
+        clientIds.forEach(id => {
+          const clientRef = doc(clientsRef, id);
+          batch.delete(clientRef);
+        });
+
+        await batch.commit();
+
+        this.clients = this.clients.filter(client => !clientIds.includes(client.id));
+
+        console.log(`${clientIds.length} clients removed successfully`);
+        return true;
+      } catch (error) {
+        console.error('Error removing client:', error);
+        throw error;
+      }
+    }
+  }
 });

@@ -31,12 +31,14 @@
 </template>
 
 <script setup lang="ts">
-import { useAsyncData } from 'nuxt/app';
+import { useAsyncData, useHead } from 'nuxt/app';
 import { useTasksStore } from '~/stores/tasks';
 import { useClientsStore } from '~/stores/clients';
 import { useAuthStore } from '~/stores/auth';
 import type { Task } from '~/types';
 import { columns } from '~/components/tasks/columns';
+import { computed, onMounted, ref } from 'vue';
+import { defineShortcuts } from '#imports';
 const authStore = useAuthStore();
 const tasksStore = useTasksStore();
 const clientsStore = useClientsStore();

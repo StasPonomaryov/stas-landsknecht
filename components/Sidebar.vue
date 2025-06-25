@@ -22,7 +22,7 @@
           </ul>
         </li>
         <li @click="toggleSidebar">
-          👨 <NuxtLink to="#">Clients</NuxtLink>
+          👨 <NuxtLink to="/clients">Clients</NuxtLink>
           <ul>
             <li>
               <NuxtLink to="#">Add client</NuxtLink>

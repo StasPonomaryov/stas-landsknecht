@@ -9,7 +9,7 @@
           <TrashIcon class="w-4 h-4" />Remove
         </Button>
         <Button v-if="table.getFilteredSelectedRowModel().rows.length === 1" variant="outline"
-          @click="navigateToTask(table.getFilteredSelectedRowModel().rows[0].original.id)">
+          @click="navigateToClient(table.getFilteredSelectedRowModel().rows[0].original.id)">
           <Pencil class="w-4 h-4" />Edit
         </Button>
       </div>
@@ -26,7 +26,7 @@
       <TableBody>
         <template v-if="table.getRowModel().rows?.length">
           <TableRow v-for="row in table.getRowModel().rows" :key="row.id"
-            :data-state="row.getIsSelected() ? 'selected' : undefined" :class="rowColor(row.original.status)">
+            :data-state="row.getIsSelected() ? 'selected' : undefined">
             <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
               <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
             </TableCell>
@@ -43,12 +43,12 @@
     </Table>
   </div>
   <div class="mt-4">
-    <TasksTablePagination :table="table" />
+    <ClientsTablePagination :table="table" />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ColumnDef, SortingState, ColumnFiltersState, } from '@tanstack/vue-table'
+import type { ColumnDef, SortingState, ColumnFiltersState } from '@tanstack/vue-table'
 import {
   Table,
   TableBody,
@@ -65,16 +65,15 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
 } from '@tanstack/vue-table';
-import TasksTablePagination from './tasks-table-pagination.vue';
+import ClientsTablePagination from './clients-table-pagination.vue';
 import { valueUpdater } from '~/lib/utils';
 import { Pencil, TrashIcon } from 'lucide-vue-next';
-import type { Task } from '~/types';
-import { ref } from 'vue';
-import { useRouter } from '#imports';
+import type { Client } from '~/types';
+import { ref, useRouter } from '#imports';
 
 const props = defineProps<{
-  columns: ColumnDef<Task, any>[]
-  data: Task[]
+  columns: ColumnDef<Client, any>[]
+  data: Client[]
 }>();
 const emit = defineEmits(['removeSelected']);
 
@@ -107,8 +106,8 @@ const table = useVueTable({
     get rowSelection() { return rowSelection.value },
   },
 });
-const navigateToTask = (taskId: string) => {
-  router.push(`/tasks/edit?id=${taskId}`);
+const navigateToClient = (clientId: string) => {
+  router.push(`/clients/edit?id=${clientId}`);
 };
 const rowColor = (status: any) => {
   const color = 'bg-transparent';
