@@ -1,28 +1,39 @@
 <template>
   <header class="site-header">
     <div class="logo">
-      <NuxtLink to="/stats">Landsknecht 🏰</NuxtLink>
+      <NuxtLink to="/">Landsknecht 🏰</NuxtLink>
     </div>
     <div v-if="user" class="user">
-      Salut,
-      <NuxtLink to="/account"><b>{{ displayName }}</b></NuxtLink>
-      <span class="link ml-2" @click="userLogout">❌</span>
+      <span class="hidden md:inline">Salut, </span>
+      <NuxtLink to="#"><span class="username">{{ userName }}</span></NuxtLink>
+      <span class="link ml-2" @click="handleLogout">❌</span>
     </div>
   </header>
 </template>
 
-<script setup>
-import { useUserStore } from '#imports';
-const user = useSupabaseUser();
-const { auth } = useSupabaseClient();
-const store = useUserStore();
-const { displayName } = storeToRefs(store);
+<script setup lang="ts">
+import { useFirebaseAuth } from '~/composables/useFirebaseAuth'
+import { useAuthStore } from '~/stores/auth'
 
-const userLogout = async () => {
-  await auth.signOut();
-  navigateTo('/');
+const authStore = useAuthStore()
+const { signOutUser } = useFirebaseAuth()
+
+const user = computed(() => authStore.user)
+const userName = computed(() => authStore.getUserName())
+
+const handleLogout = async () => {
+  await signOutUser()
+  navigateTo('/login')
 }
 </script>
 
 <style scoped>
+.username {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 150px;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
 </style>

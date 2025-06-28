@@ -1,54 +1,54 @@
+import tailwindcss from "@tailwindcss/vite";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
-  modules: [
-    '@nuxtjs/supabase',
-    'nuxt-security',
-    '@pinia/nuxt',
-    '@vueform/nuxt'
-  ],
-  supabase: {
-    redirectOptions: {
-      login: '/',
-      callback: '/confirm'
-    }
-  },
-  devServer: {
-    port: 5000
-  },
   app: {
     head: {
       title: 'Landsknecht'
     }
   },
-  css: [
-    '~/assets/css/styles.css',
+  colorMode: {
+    preference: 'light',
+  },
+  compatibilityDate: '2024-11-01',
+  css: ['~/assets/css/main.css'],
+  devtools: { enabled: true },
+  devServer: {
+    port: 5000,
+  },
+  modules: [
+    '@nuxt/ui',
+    '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
+    'nuxt-tiptap-editor',
+    'shadcn-nuxt',
   ],
-  // security: {
-  //   corsHandler: {
-  //     origin: '*'
-  //   }
-  // },
   runtimeConfig: {
     public: {
-      baseUrl: process.env.BASE_URL || 'http://localhost:5000'
-    }
-  },
-  components: [
-    {
-      path: '~/components',
-      pathPrefix: false
-    }
-  ],
-  security: {
-    enabled: true,
-    nonce: true,
-    headers: {
-      contentSecurityPolicy: {
-        'script-src': ["'nonce-{{nonce}}'", "'strict-dynamic'"],
-      },
-      // 2.
-      crossOriginEmbedderPolicy: false,
+      baseUrl: process.env.BASE_URL || 'http://localhost:5000',
+      firebaseApiKey: process.env.FIREBASE_API_KEY,
+      firebaseAuthDomain: '',
+      firebaseProjectId: '',
+      firebaseStorageBucket: '',
+      firebaseMessagingSenderId: '',
+      firebaseAppId: process.env.FIREBASE_APP_ID,
     },
+
   },
-})
+  shadcn: {
+    /**
+     * Prefix for all the imported component
+     */
+    prefix: '',
+    /**
+     * Directory that the component lives in.
+     * @default "./components/ui"
+     */
+    componentDir: './components/ui'
+  }
+  // vite: {
+  //   plugins: [
+  //     tailwindcss(),
+  //   ],
+  // },
+});
