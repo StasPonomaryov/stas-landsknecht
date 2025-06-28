@@ -10,7 +10,7 @@ export const useClientsStore = defineStore('clientsStore', {
   }),
   actions: {
     async fetchClients() {
-      console.log('Fetching clients, SSR:', process.server);
+      // console.log('Fetching clients, SSR:', process.server);
       const db = (useNuxtApp().$firestore as Firestore);
       const clientsRef = collection(db, 'clients');
       const snapshot = await getDocs(clientsRef);
@@ -32,10 +32,10 @@ export const useClientsStore = defineStore('clientsStore', {
           return;
         }
 
-        console.log('Firestore instance is initialized');
+        // console.log('Firestore instance is initialized');
         const clientsRef = doc(db, 'clients', client.id);
         await setDoc(clientsRef, client);
-        console.log('Client was created');
+        // console.log('Client was created');
         await this.fetchUserClients(client.users[0]);
         this.clients.push(client);
       } catch (error) {
@@ -92,7 +92,7 @@ export const useClientsStore = defineStore('clientsStore', {
         return;
       }
 
-      console.log('Removing clients with IDs:', clientIds);
+      // console.log('Removing clients with IDs:', clientIds);
       try {
         const db = useNuxtApp().$firestore as Firestore | undefined;
 
@@ -101,7 +101,7 @@ export const useClientsStore = defineStore('clientsStore', {
           return;
         }
 
-        console.log('Firestore instance is initialized');
+        // console.log('Firestore instance is initialized');
 
         const batch = writeBatch(db);
         const clientsRef = collection(db, 'clients');
@@ -115,7 +115,7 @@ export const useClientsStore = defineStore('clientsStore', {
 
         this.clients = this.clients.filter(client => !clientIds.includes(client.id));
 
-        console.log(`${clientIds.length} clients removed successfully`);
+        // console.log(`${clientIds.length} clients removed successfully`);
         return true;
       } catch (error) {
         console.error('Error removing client:', error);

@@ -25,11 +25,13 @@
 import { useTasksStore } from '~/stores/tasks';
 import { useClientsStore } from '~/stores/clients';
 import { useAuthStore } from '~/stores/auth';
-import { getTasksOfTheYear } from '~/composables/useAnalytics';
+import { dataClientsByOrdersCount, dataClientsByOrdersIncome, dataClientsOrdersCount, dataClientsOrdersIncome, dataTasksOfMonths, getTasksOfTheYear } from '~/composables/useAnalytics';
 import ClientsChart from '~/components/app-ui/charts/ClientsChart.vue';
 import MonthlyIncomeChart from '~/components/app-ui/charts/MonthlyIncomeChart.vue';
 import MonthlyOrdersChart from '~/components/app-ui/charts/MonthlyOrdersChart.vue';
 import type { Task, TasksChart } from '~/types';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useAsyncData } from '#imports';
 
 const authStore = useAuthStore();
 const tasksStore = useTasksStore();
@@ -50,12 +52,12 @@ const clientsByCount = ref<TasksChart[]>([]);
 const clientsByIncome = ref<TasksChart[]>([]);
 const tasks = computed(() => {
   const taskList = tasksStore.tasks;
-  console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
+  // console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
   return taskList;
 });
 const clients = computed(() => {
   const clientList = clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || [];
-  console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
+  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
   return clientList;
 });
 

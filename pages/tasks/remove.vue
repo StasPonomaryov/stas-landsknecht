@@ -94,12 +94,12 @@ const user = computed(() => {
 });
 const tasks = computed(() => {
   const taskList = tasksStore.tasks?.map((task) => ({ label: task.title, value: task.id })) || [];
-  console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
+  // console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
   return taskList;
 });
 const clients = computed(() => {
   const clientList = clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || [];
-  console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
+  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
   return clientList;
 });
 
@@ -128,7 +128,7 @@ useAsyncData(
 );
 
 const onTaskSelect = (value: string) => {
-  console.log('Task selected via @update:modelValue:', value);
+  // console.log('Task selected via @update:modelValue:', value);
   selectedTask.value = {
     label: tasksStore.tasks.find((task) => task.id === value)?.title || '',
     value,

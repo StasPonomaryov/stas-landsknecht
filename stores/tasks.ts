@@ -9,7 +9,7 @@ export const useTasksStore = defineStore('tasksStore', {
   }),
   actions: {
     async fetchTasks() {
-      console.log('Fetching tasks, SSR:', process.server);
+      // console.log('Fetching tasks, SSR:', process.server);
       const db = (useNuxtApp().$firestore as Firestore);
       const tasksRef = collection(db, 'tasks');
       const snapshot = await getDocs(tasksRef);
@@ -31,10 +31,10 @@ export const useTasksStore = defineStore('tasksStore', {
           return;
         }
 
-        console.log('Firestore instance is initialized');
+        // console.log('Firestore instance is initialized');
         const tasksRef = doc(db, 'tasks', task.id);
         await setDoc(tasksRef, task);
-        console.log('Task was created');
+        // console.log('Task was created');
         await this.fetchUserTasks(task.users[0]);
         this.tasks.push(task);
       } catch (error) {
@@ -95,7 +95,7 @@ export const useTasksStore = defineStore('tasksStore', {
           return;
         }
 
-        console.log('Fetching tasks for UID:', uid);
+        // console.log('Fetching tasks for UID:', uid);
         const tasksRef = collection(db, 'tasks');
         const q = query(tasksRef, where('users', 'array-contains', uid));
         const snapshot = await getDocs(q);
@@ -115,7 +115,7 @@ export const useTasksStore = defineStore('tasksStore', {
         return;
       }
 
-      console.log('Removing tasks with IDs:', taskIds);
+      // console.log('Removing tasks with IDs:', taskIds);
       try {
         const db = useNuxtApp().$firestore as Firestore | undefined;
 
@@ -124,7 +124,7 @@ export const useTasksStore = defineStore('tasksStore', {
           return;
         }
 
-        console.log('Firestore instance is initialized');
+        // console.log('Firestore instance is initialized');
 
         const batch = writeBatch(db);
         const tasksRef = collection(db, 'tasks');
@@ -138,7 +138,7 @@ export const useTasksStore = defineStore('tasksStore', {
 
         this.tasks = this.tasks.filter(task => !taskIds.includes(task.id));
 
-        console.log(`${taskIds.length} tasks removed successfully`);
+        // console.log(`${taskIds.length} tasks removed successfully`);
         return true;
       } catch (error) {
         console.error('Error removing task:', error);

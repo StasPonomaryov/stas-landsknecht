@@ -25,7 +25,7 @@ const handleLogin = async () => {
 
   try {
     const user = await signInWithGitHub();
-    console.log('User:', user);
+    // console.log('User:', user);
 
     if (user) {
       await router.push('/')

@@ -79,7 +79,7 @@ const user = computed(() => {
 });
 const clients = computed(() => {
   const clientList = clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || [];
-  console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
+  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
   return clientList;
 });
 
@@ -107,7 +107,7 @@ useAsyncData(
 );
 
 const onClientSelect = (value: string) => {
-  console.log('Client selected via @update:modelValue:', value);
+  // console.log('Client selected via @update:modelValue:', value);
   selectedClient.value = {
     label: clientsStore.clients.find((client) => client.id === value)?.name || '',
     value,

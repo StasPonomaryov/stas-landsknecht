@@ -52,7 +52,7 @@ const clientsToRemove = ref<Client[] | null>(null);
 
 const clients = computed(() => {
   const clientList = clientsStore.clients;
-  console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
+  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
 
   return clientList
 });

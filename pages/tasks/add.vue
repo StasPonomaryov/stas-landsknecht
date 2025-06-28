@@ -96,7 +96,7 @@ async function onSubmit(event: FormSubmitEvent<unknown>) {
   statusMessage.value = null;
 
   if (!validateFormData() || !user.value) return;
-  console.log(event);
+  // console.log(event);
 
   const data = {
     clientId: formData.value.client,
