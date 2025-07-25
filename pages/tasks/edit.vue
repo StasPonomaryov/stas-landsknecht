@@ -30,15 +30,15 @@
               <div class="flex lg:w-1/2 flex-col">
                 <UFormField label="Price start" name="priceStart" size="lg">
                   <UInputNumber class="w-full" v-model="formData.priceStart" :error="formErrors.priceStart"
-                    orientation="vertical" />
+                    orientation="vertical" step="any" />
                 </UFormField>
                 <UFormField label="Price end" name="priceEnd" size="lg">
                   <UInputNumber class="w-full" v-model="formData.priceEnd" :error="formErrors.priceEnd"
-                    orientation="vertical" />
+                    orientation="vertical" step="any" />
                 </UFormField>
                 <UFormField label="Hours spent" name="hours" size="lg">
                   <UInputNumber class="w-full" v-model="formData.hours" :error="formErrors.hours"
-                    orientation="vertical" />
+                    orientation="vertical" step="0.25" />
                 </UFormField>
               </div>
               <div class="flex w-1/2 flex-col">
@@ -126,18 +126,18 @@ const statuses = ref<RadioGroupItem[]>(STATUSES);
 
 const tasks = computed(() => {
   const taskList = tasksStore.tasks?.map((task) => ({ label: task.title, value: task.id })) || [];
-  console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
+  // console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
   return taskList;
 });
 const clients = computed(() => {
   const clientList = clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || [];
-  console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
+  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
   return clientList;
 });
 
 const parsedId = computed(() => {
   const id = route.query.id;
-  console.log('Parsed ID, SSR:', process.server, 'ID:', id);
+  // console.log('Parsed ID, SSR:', process.server, 'ID:', id);
   if (id) isLoading.value = false;
 
   return id ? id.toString() : null;
@@ -184,7 +184,7 @@ const onSubmit = async (event: FormSubmitEvent<unknown>) => {
   errorMessage.value = null;
 
   if (!validateFormData() || !user.value) return;
-  console.log('Form submitted:', event);
+  // console.log('Form submitted:', event);
 
   const taskId = parsedId.value ?? selectedTask.value.value;
   const data = {
@@ -216,7 +216,7 @@ const onSubmit = async (event: FormSubmitEvent<unknown>) => {
 };
 
 const onTaskSelect = (value: string) => {
-  console.log('Task selected via @update:modelValue:', value);
+  // console.log('Task selected via @update:modelValue:', value);
   selectedTask.value = {
     label: tasksStore.tasks.find((task) => task.id === value)?.title || '',
     value,
@@ -225,7 +225,7 @@ const onTaskSelect = (value: string) => {
 };
 
 const updateFormData = (taskId: string) => {
-  console.log('Updating form data for task:', taskId);
+  // console.log('Updating form data for task:', taskId);
   const task = tasksStore.tasks.find((t) => t.id === taskId);
   if (!task) {
     errorMessage.value = 'Task not found.';
@@ -245,13 +245,13 @@ const updateFormData = (taskId: string) => {
   };
 
   router.replace({ query: { id: task.id } });
-  console.log('Form data updated:', formData.value);
+  // console.log('Form data updated:', formData.value);
 };
 
 watch(
   () => selectedTask.value.value,
   (newValue) => {
-    console.log('Watch triggered, selectedTask.value:', newValue);
+    // console.log('Watch triggered, selectedTask.value:', newValue);
     if (newValue) {
       updateFormData(newValue);
     }

@@ -10,23 +10,28 @@
   </section>
 </template>
 <script setup lang="ts">
+import { definePageMeta } from '#imports';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useFirebaseAuth } from '~/composables/useFirebaseAuth';
+
 const router = useRouter();
 const { signInWithGitHub } = useFirebaseAuth();
 const loading = ref(false);
-const error = ref<string|null>('');
+const error = ref<string | null>('');
 const handleLogin = async () => {
   loading.value = true
   error.value = null
 
   try {
     const user = await signInWithGitHub();
-    console.log('User:', user);
-    
+    // console.log('User:', user);
+
     if (user) {
       await router.push('/')
     }
   } catch (err) {
-    error.value = 'Failed to login with GitHub'
+    error.value = `Failed to login with GitHub. ${(err as Error).message}`
     console.error(err)
   } finally {
     loading.value = false

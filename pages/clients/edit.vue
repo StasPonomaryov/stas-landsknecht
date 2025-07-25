@@ -47,7 +47,6 @@
   </ClientOnly>
 </template>
 <script setup lang="ts">
-import { nanoid } from 'nanoid';
 import { addClientFormSchema, type AddClientFormData, type AddClientFormErrors } from '~/shared/utils/validators';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { type z } from 'zod';
@@ -77,7 +76,7 @@ const selectedClient = ref<{ label: string; value: string }>({ label: '', value:
 
 const parsedId = computed(() => {
   const id = route.query.id;
-  console.log('Parsed ID, SSR:', process.server, 'ID:', id);
+  // console.log('Parsed ID, SSR:', process.server, 'ID:', id);
   if (id) isLoading.value = false;
 
   return id ? id.toString() : null;
@@ -85,7 +84,7 @@ const parsedId = computed(() => {
 
 const clients = computed(() => {
   const clientList = clientsStore.clients;
-  console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
+  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
 
   return clientList
 });
@@ -115,7 +114,7 @@ useAsyncData(
 
 async function onSubmit(event: FormSubmitEvent<unknown>) {
   statusMessage.value = null;
-  console.log(event);
+  // console.log(event);
 
   if (!validateFormData() || !user.value) return;
 
@@ -127,7 +126,7 @@ async function onSubmit(event: FormSubmitEvent<unknown>) {
     name: formData.value.name,
     users: [user.value.uid],
   };
-  console.log('Client, data:', clientId, data);
+  // console.log('Client, data:', clientId, data);
 
   try {
     await useClientsStore().updateClient(clientId, data);
@@ -162,7 +161,7 @@ if (user.value && !clientsStore.clients.length) {
   clientsStore.fetchUserClients(user.value.uid);
 };
 const onClientSelect = (value: string) => {
-  console.log('Client selected via @update:modelValue:', value);
+  // console.log('Client selected via @update:modelValue:', value);
   selectedClient.value = {
     label: clientsStore.clients.find((client) => client.id === value)?.name || '',
     value,
@@ -171,7 +170,7 @@ const onClientSelect = (value: string) => {
 };
 
 const updateFormData = (clientId: string) => {
-  console.log('Updating form data for client:', clientId);
+  // console.log('Updating form data for client:', clientId);
   const client = clientsStore.clients.find((t) => t.id === clientId);
   if (!client) {
     errorMessage.value = 'Client not found.';
@@ -182,25 +181,16 @@ const updateFormData = (clientId: string) => {
     contacts: client.contacts || '',
     description: client.description || '',
     name: client.name,
-    // client: task.clientId,
-    // dateStart: task.start,
-    // dateEnd: task.end,
-    // description: task.text,
-    // hours: task.hours ? Number(task.hours) : 0,
-    // priceStart: task.priceStart ? Number(task.priceStart) : 0,
-    // priceEnd: task.priceEnd ? Number(task.priceEnd) : 0,
-    // status: convertStatusToText(task.status),
-    // title: task.title,
   };
 
   router.replace({ query: { id: client.id } });
-  console.log('Form data updated:', formData.value);
+  // console.log('Form data updated:', formData.value);
 };
 
 watch(
   () => selectedClient.value.value,
   (newValue) => {
-    console.log('Watch triggered, selectedClient.value:', newValue);
+    // console.log('Watch triggered, selectedClient.value:', newValue);
     if (newValue) {
       updateFormData(newValue);
     }
@@ -232,15 +222,6 @@ watch(
       contacts: client.contacts || '',
       description: client.description || '',
       name: client.name,
-      // client: task.clientId,
-      // dateStart: task.start,
-      // dateEnd: task.end,
-      // description: task.text,
-      // hours: task.hours ? Number(task.hours) : 0,
-      // priceStart: task.priceStart ? Number(task.priceStart) : 0,
-      // priceEnd: task.priceEnd ? Number(task.priceEnd) : 0,
-      // status: convertStatusToText(task.status),
-      // title: task.title,
     };
 
     selectedClient.value = {

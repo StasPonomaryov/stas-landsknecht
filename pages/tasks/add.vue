@@ -22,15 +22,15 @@
             <div class="flex lg:w-1/2 flex-col">
               <UFormField label="Price start" name="priceStart" size="lg">
                 <UInputNumber class="w-full" v-model="formData.priceStart" :error="formErrors.priceStart"
-                  orientation="vertical" />
+                  orientation="vertical" step="any" />
               </UFormField>
               <UFormField label="Price end" name="priceEnd" size="lg">
                 <UInputNumber class="w-full" v-model="formData.priceEnd" :error="formErrors.priceEnd"
-                  orientation="vertical" />
+                  orientation="vertical" step="any" />
               </UFormField>
               <UFormField label="Hours spent" name="hours" size="lg">
                 <UInputNumber class="w-full" v-model="formData.hours" :error="formErrors.hours"
-                  orientation="vertical" />
+                  orientation="vertical" step="0.25" />
               </UFormField>
             </div>
             <div class="flex w-1/2 flex-col">
@@ -96,7 +96,7 @@ async function onSubmit(event: FormSubmitEvent<unknown>) {
   statusMessage.value = null;
 
   if (!validateFormData() || !user.value) return;
-  console.log(event);
+  // console.log(event);
 
   const data = {
     clientId: formData.value.client,

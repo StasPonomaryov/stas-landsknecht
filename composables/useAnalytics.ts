@@ -1,5 +1,6 @@
 import { collection, query, where, getDocs, getFirestore, Firestore } from "firebase/firestore";
 import { useNuxtApp } from 'nuxt/app';
+import { useClientsStore } from "~/stores/clients";
 import type { Task, TasksChart } from "~/types";
 
 export const labelsMonths = [
@@ -83,7 +84,7 @@ export const dataClientsOrdersIncome = (tasks: Task[], selectedYear: number) => 
     return [];
   }
 
-  console.log('Tasks', tasks);
+  // console.log('Tasks', tasks);
 
   const data: TasksChart[] = [];
 

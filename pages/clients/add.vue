@@ -48,7 +48,7 @@ const statusMessage = ref<{ text: string, variant: "success" | "error" } | null>
 
 async function onSubmit(event: FormSubmitEvent<unknown>) {
   statusMessage.value = null;
-  console.log(event);
+  // console.log(event);
 
   if (!validateFormData() || !user.value) return;
 

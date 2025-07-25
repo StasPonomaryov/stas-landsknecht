@@ -1,5 +1,6 @@
 import { GithubAuthProvider, signInWithPopup, signOut, type Auth, type User } from 'firebase/auth'
 import { useNuxtApp, onNuxtReady } from '#app'
+import { useAuthStore } from '~/stores/auth'
 
 export const useFirebaseAuth = () => {
   const { $auth } = useNuxtApp()
@@ -12,7 +13,7 @@ export const useFirebaseAuth = () => {
   const signInWithGitHub = async (): Promise<User | null> => {
     if (!authStore) {
       console.warn('Pinia store is not ready yet. Waiting...')
-      await new Promise(resolve => setTimeout(resolve, 100)) 
+      await new Promise(resolve => setTimeout(resolve, 100))
       authStore = useAuthStore()
     }
 
@@ -25,7 +26,7 @@ export const useFirebaseAuth = () => {
       return result.user
     } catch (error) {
       console.error('GitHub sign-in error:', error)
-      return null
+      throw error;
     }
   }
 
@@ -41,6 +42,7 @@ export const useFirebaseAuth = () => {
       }
     } catch (error) {
       console.error('Sign out error:', error)
+      throw error;
     }
   }
 
