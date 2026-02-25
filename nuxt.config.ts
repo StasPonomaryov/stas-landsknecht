@@ -1,5 +1,3 @@
-import tailwindcss from "@tailwindcss/vite";
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
@@ -23,6 +21,9 @@ export default defineNuxtConfig({
     'nuxt-tiptap-editor',
     'shadcn-nuxt',
   ],
+  ui: {
+    fonts: false,
+  },
   runtimeConfig: {
     public: {
       baseUrl: process.env.BASE_URL || 'http://localhost:5000',
@@ -46,9 +47,4 @@ export default defineNuxtConfig({
      */
     componentDir: './components/ui'
   }
-  // vite: {
-  //   plugins: [
-  //     tailwindcss(),
-  //   ],
-  // },
 });
