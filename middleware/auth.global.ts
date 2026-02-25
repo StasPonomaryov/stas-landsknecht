@@ -4,6 +4,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (to.path === '/login') {
     return;
   }
+  // Auth hydration is initialized in a client-only plugin.
+  // Avoid waiting on server render to prevent SSR deadlock.
+  if (import.meta.server) {
+    return;
+  }
 
   if (!authStore.isAuthResolved) {
     await new Promise<void>((resolve) => {
