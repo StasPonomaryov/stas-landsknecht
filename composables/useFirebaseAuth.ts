@@ -6,18 +6,10 @@ export const useFirebaseAuth = () => {
   const { $auth } = useNuxtApp();
   const authStore = useAuthStore();
 
-  const ensureAuth = (): Auth => {
-    if (!$auth) {
-      throw new Error('Firebase auth is not configured. Check runtime env variables.');
-    }
-
-    return $auth as Auth;
-  };
-
   const signInWithGitHub = async (): Promise<User | null> => {
     try {
       const provider = new GithubAuthProvider();
-      const result = await signInWithPopup(ensureAuth(), provider);
+      const result = await signInWithPopup($auth as Auth, provider);
       authStore.setUser(result.user);
       authStore.setAuthResolved(true);
 
@@ -30,7 +22,7 @@ export const useFirebaseAuth = () => {
 
   const signOutUser = async () => {
     try {
-      await signOut(ensureAuth());
+      await signOut($auth as Auth);
       authStore.clearUser();
       authStore.setAuthResolved(true);
     } catch (error) {
@@ -40,11 +32,7 @@ export const useFirebaseAuth = () => {
   };
 
   const getCurrentUser = (): User | null => {
-    if (!$auth) {
-      return null;
-    }
-
-    return ($auth as Auth).currentUser || null;
+    return ($auth as Auth)?.currentUser || null;
   };
 
   return {
