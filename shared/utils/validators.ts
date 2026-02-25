@@ -30,5 +30,5 @@ export const editClientFormSchema = addClientFormSchema;
 
 export type AddClientFormData = z.infer<typeof addClientFormSchema>;
 export type AddClientFormErrors = Partial<Record<keyof AddClientFormData, string>>;
-export type EditClientFormData = z.infer<typeof editTaskFormSchema>;
-export type EditClientFormErrors = Partial<Record<keyof EditTaskFormData, string>>;
+export type EditClientFormData = z.infer<typeof editClientFormSchema>;
+export type EditClientFormErrors = Partial<Record<keyof EditClientFormData, string>>;
