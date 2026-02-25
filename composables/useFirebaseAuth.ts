@@ -7,6 +7,10 @@ export const useFirebaseAuth = () => {
   const authStore = useAuthStore();
 
   const signInWithGitHub = async (): Promise<User | null> => {
+    if (!$auth) {
+      throw new Error('Firebase auth is not configured');
+    }
+
     try {
       const provider = new GithubAuthProvider();
       const result = await signInWithPopup($auth as Auth, provider);
@@ -21,6 +25,10 @@ export const useFirebaseAuth = () => {
   };
 
   const signOutUser = async () => {
+    if (!$auth) {
+      return;
+    }
+
     try {
       await signOut($auth as Auth);
       authStore.clearUser();

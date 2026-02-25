@@ -33,8 +33,14 @@ export const useAuthStore = defineStore('auth', {
     setAuthResolved(value: boolean) {
       this.isAuthResolved = value;
     },
-    initializeAuth(auth: Auth) {
+    initializeAuth(auth: Auth | null | undefined) {
       if (this._authInitialized) {
+        return;
+      }
+
+      if (!auth) {
+        this.setAuthResolved(true);
+
         return;
       }
 
