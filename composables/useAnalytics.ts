@@ -18,7 +18,7 @@ export const labelsMonths = [
   'Dec',
 ];
 
-export const getTasksOfTheYear = async (year: number) => {
+export const getTasksOfTheYear = async (year: number, uid: string) => {
   const db = (useNuxtApp().$firestore as Firestore);
 
   if (!db) {
@@ -31,6 +31,7 @@ export const getTasksOfTheYear = async (year: number) => {
 
   const tasksQuery = query(
     collection(db, "tasks"),
+    where("users", "array-contains", uid),
     where("start", ">=", startOfYear),
     where("start", "<=", endOfYear)
   );

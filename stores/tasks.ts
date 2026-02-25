@@ -36,7 +36,6 @@ export const useTasksStore = defineStore('tasksStore', {
         await setDoc(tasksRef, task);
         // console.log('Task was created');
         await this.fetchUserTasks(task.users[0]);
-        this.tasks.push(task);
       } catch (error) {
         console.error('Error adding task:', error);
         throw error;
