@@ -1,6 +1,10 @@
-import { initializeApp } from 'firebase/app'
-import { getAuth } from "firebase/auth"
-import { getFirestore } from 'firebase/firestore'
+import { initializeApp } from 'firebase/app';
+import { getAuth, type Auth } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
+
+const isFirebaseConfigValid = (config: Record<string, string | undefined>) => {
+  return Object.values(config).every((value) => typeof value === 'string' && value.trim().length > 0);
+};
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();
@@ -14,8 +18,19 @@ export default defineNuxtPlugin((nuxtApp) => {
     appId: config.public.firebaseAppId,
   };
 
-  const app = initializeApp(firebaseConfig);
+  if (!isFirebaseConfigValid(firebaseConfig)) {
+    console.warn('[firebase] Firebase config is incomplete. Auth/Firestore are disabled.');
 
+    nuxtApp.vueApp.provide('auth', null as Auth | null);
+    nuxtApp.provide('auth', null as Auth | null);
+
+    nuxtApp.vueApp.provide('firestore', null as Firestore | null);
+    nuxtApp.provide('firestore', null as Firestore | null);
+
+    return;
+  }
+
+  const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const firestore = getFirestore(app);
 
@@ -24,6 +39,4 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp.vueApp.provide('firestore', firestore);
   nuxtApp.provide('firestore', firestore);
-
-  // console.log('Firebase initialized, db:', firestore);
 });
