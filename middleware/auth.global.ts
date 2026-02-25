@@ -2,12 +2,18 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const authStore = useAuthStore();
 
   if (to.path === '/login') {
+    if (import.meta.client && authStore.user) {
+      return navigateTo('/');
+    }
+
     return;
   }
-  // Auth hydration is initialized in a client-only plugin.
-  // Avoid waiting on server render to prevent SSR deadlock.
+
+  // This project resolves auth only on the client via Firebase SDK.
+  // On SSR we cannot confirm session, so always redirect protected pages
+  // to avoid rendering private layout/content and hydration mismatches.
   if (import.meta.server) {
-    return;
+    return navigateTo('/login');
   }
 
   if (!authStore.isAuthResolved) {
