@@ -1,12 +1,26 @@
-export default defineNuxtRouteMiddleware(async (to, from) => { 
-  const authStore = useAuthStore()
-  const user = authStore.user
+export default defineNuxtRouteMiddleware(async (to) => {
+  const authStore = useAuthStore();
 
   if (to.path === '/login') {
-    return
+    return;
   }
 
-  if (!user) {
-    return navigateTo('/login')
+  if (!authStore.isAuthResolved) {
+    await new Promise<void>((resolve) => {
+      const stop = watch(
+        () => authStore.isAuthResolved,
+        (isResolved) => {
+          if (isResolved) {
+            stop();
+            resolve();
+          }
+        },
+        { immediate: true }
+      );
+    });
+  }
+
+  if (!authStore.user) {
+    return navigateTo('/login');
   }
 });

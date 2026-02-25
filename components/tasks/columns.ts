@@ -43,7 +43,7 @@ export const columns: ColumnDef<Task>[] = [
         ? getExcerpt(description)
         : '';
 
-      return h('div', { class: 'text-left font-medium]' }, excerpt)
+      return h('div', { class: 'text-left font-medium' }, excerpt)
     },
   },
   {
