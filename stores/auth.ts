@@ -33,12 +33,18 @@ export const useAuthStore = defineStore('auth', {
     setAuthResolved(value: boolean) {
       this.isAuthResolved = value;
     },
-    initializeAuth(auth: Auth) {
+    initializeAuth(auth: Auth | null) {
       if (this._authInitialized) {
         return;
       }
 
       this._authInitialized = true;
+
+      if (!auth) {
+        this.setAuthResolved(true);
+        return;
+      }
+
       this.setAuthResolved(false);
 
       onAuthStateChanged(auth, (firebaseUser) => {

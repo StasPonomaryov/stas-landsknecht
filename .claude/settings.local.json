@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls d:/git/projects/stas-landsknecht/.env*)",
+      "Bash(ls d:/git/projects/stas-landsknecht/.eslint* d:/git/projects/stas-landsknecht/.prettier*)",
+      "Bash(npx nuxi typecheck)",
+      "Bash(ls d:/git/projects/stas-landsknecht/.nuxt/*.d.ts)",
+      "Bash(find d:/git/projects/stas-landsknecht/node_modules/.pnpm/pinia-plugin-persistedstate* -name \"*.d.ts\")",
+      "Bash(find d:/git/projects/stas-landsknecht/node_modules/.pnpm/pinia@* -name \"index.d.ts\")",
+      "Bash(find d:/git/projects/stas-landsknecht/node_modules/.pnpm/pinia@* -name \"*.d.ts\")",
+      "Bash(pnpm nuxt prepare)",
+      "Bash(pnpm exec nuxi typecheck)",
+      "Bash(pnpm typecheck)"
+    ]
+  }
+}

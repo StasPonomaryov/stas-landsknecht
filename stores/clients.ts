@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { addDoc, collection, deleteDoc, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
-import type { NewClient, Client } from '~/types';
+import { collection, deleteDoc, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
+import type { Client } from '~/types';
 import { useNuxtApp } from 'nuxt/app';
 
 export const useClientsStore = defineStore('clientsStore', {
@@ -10,8 +10,12 @@ export const useClientsStore = defineStore('clientsStore', {
   }),
   actions: {
     async fetchClients() {
-      // console.log('Fetching clients, SSR:', process.server);
-      const db = (useNuxtApp().$firestore as Firestore);
+      const db = useNuxtApp().$firestore as Firestore | null;
+      if (!db) {
+        console.error('Firestore is not initialized');
+        this.clients = [];
+        return;
+      }
       const clientsRef = collection(db, 'clients');
       const snapshot = await getDocs(clientsRef);
       this.clients = snapshot.docs.map((doc) => ({ ...doc.data() })) as Client[];
@@ -24,7 +28,7 @@ export const useClientsStore = defineStore('clientsStore', {
       }
 
       try {
-        const db = (useNuxtApp().$firestore as Firestore);
+        const db = useNuxtApp().$firestore as Firestore | null;
 
         if (!db) {
           console.error('Firestore instance is not initialized');
@@ -32,10 +36,8 @@ export const useClientsStore = defineStore('clientsStore', {
           return;
         }
 
-        // console.log('Firestore instance is initialized');
         const clientsRef = doc(db, 'clients', client.id);
         await setDoc(clientsRef, client);
-        // console.log('Client was created');
         await this.fetchUserClients(client.users[0]);
       } catch (error) {
         console.error('Error adding client:', error);
@@ -44,7 +46,11 @@ export const useClientsStore = defineStore('clientsStore', {
     },
 
     async updateClient(id: string, client: Client) {
-      const db = (useNuxtApp().$firestore as Firestore);
+      const db = useNuxtApp().$firestore as Firestore | null;
+      if (!db) {
+        console.error('Firestore is not initialized');
+        return;
+      }
       const clientsRef = collection(db, 'clients');
       const clientRef = doc(clientsRef, client.id);
       await updateDoc(clientRef, client);
@@ -56,7 +62,11 @@ export const useClientsStore = defineStore('clientsStore', {
     },
 
     async deleteClient(id: string) {
-      const db = (useNuxtApp().$firestore as Firestore);
+      const db = useNuxtApp().$firestore as Firestore | null;
+      if (!db) {
+        console.error('Firestore is not initialized');
+        return;
+      }
       const clientsRef = collection(db, 'clients');
       const clientRef = doc(clientsRef, id);
       await deleteDoc(clientRef);
@@ -65,21 +75,30 @@ export const useClientsStore = defineStore('clientsStore', {
     },
 
     async getClientsCount() {
-      const db = (useNuxtApp().$firestore as Firestore);
+      const db = useNuxtApp().$firestore as Firestore | null;
+      if (!db) {
+        console.error('Firestore is not initialized');
+        return 0;
+      }
       const clientsRef = collection(db, 'clients');
       const snapshot = await getCountFromServer(clientsRef);
-      const count = snapshot.data().count;
 
-      return count;
+      return snapshot.data().count;
     },
 
     async fetchUserClients(uid?: string) {
       if (!uid) {
-        return this.fetchClients();
+        console.error('fetchUserClients: uid is required');
+        this.clients = [];
+        return;
       }
-      const db = (useNuxtApp().$firestore as Firestore);
+      const db = useNuxtApp().$firestore as Firestore | null;
+      if (!db) {
+        console.error('Firestore is not initialized');
+        this.clients = [];
+        return;
+      }
       const clientsRef = collection(db, 'clients');
-
       const q = query(clientsRef, where("users", "array-contains", uid));
       const snapshot = await getDocs(q);
       this.clients = snapshot.docs.map((doc) => ({ ...doc.data() })) as Client[];
@@ -91,16 +110,13 @@ export const useClientsStore = defineStore('clientsStore', {
         return;
       }
 
-      // console.log('Removing clients with IDs:', clientIds);
       try {
-        const db = useNuxtApp().$firestore as Firestore | undefined;
+        const db = useNuxtApp().$firestore as Firestore | null;
 
         if (!db) {
           console.error('Firestore instance is not initialized');
           return;
         }
-
-        // console.log('Firestore instance is initialized');
 
         const batch = writeBatch(db);
         const clientsRef = collection(db, 'clients');
@@ -114,7 +130,6 @@ export const useClientsStore = defineStore('clientsStore', {
 
         this.clients = this.clients.filter(client => !clientIds.includes(client.id));
 
-        // console.log(`${clientIds.length} clients removed successfully`);
         return true;
       } catch (error) {
         console.error('Error removing client:', error);

@@ -42,8 +42,11 @@ const user = computed(() => {
 });
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
-const targetYear = ref(new Date().getFullYear().toString());
-const allYears = ref(['2023', '2024', '2025']);
+const currentYear = new Date().getFullYear();
+const targetYear = ref(currentYear.toString());
+const allYears = ref(
+  Array.from({ length: 4 }, (_, i) => (currentYear - 3 + i).toString())
+);
 const thisYearTasks = ref<Task[]>([]);
 const lastPeriodTasks = ref<Task[]>([]);
 const tasksByCount = ref<TasksChart[]>([]);

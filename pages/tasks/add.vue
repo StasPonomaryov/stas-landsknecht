@@ -22,15 +22,15 @@
             <div class="flex lg:w-1/2 flex-col">
               <UFormField label="Price start" name="priceStart" size="lg">
                 <UInputNumber class="w-full" v-model="formData.priceStart" :error="formErrors.priceStart"
-                  orientation="vertical" step="any" />
+                  orientation="vertical" :step="0.01" />
               </UFormField>
               <UFormField label="Price end" name="priceEnd" size="lg">
                 <UInputNumber class="w-full" v-model="formData.priceEnd" :error="formErrors.priceEnd"
-                  orientation="vertical" step="any" />
+                  orientation="vertical" :step="0.01" />
               </UFormField>
               <UFormField label="Hours spent" name="hours" size="lg">
                 <UInputNumber class="w-full" v-model="formData.hours" :error="formErrors.hours"
-                  orientation="vertical" step="0.25" />
+                  orientation="vertical" :step="0.25" />
               </UFormField>
             </div>
             <div class="flex w-1/2 flex-col">
@@ -60,7 +60,6 @@
 <script setup lang="ts">
 import { nanoid } from 'nanoid';
 import { addTaskFormSchema, type AddTaskFormData, type AddTaskFormErrors } from '~/shared/utils/validators';
-import type { FormSubmitEvent } from '@nuxt/ui';
 import type { RadioGroupItem } from '@nuxt/ui'
 import type { z } from 'zod';
 import { useAuthStore } from '~/stores/auth';
@@ -92,11 +91,10 @@ const statusMessage = ref<{ text: string, variant: "success" | "error" } | null>
 const statuses = ref<RadioGroupItem[]>(STATUSES);
 const clients = computed(() => clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || []);
 
-async function onSubmit(event: FormSubmitEvent<unknown>) {
+async function onSubmit() {
   statusMessage.value = null;
 
   if (!validateFormData() || !user.value) return;
-  // console.log(event);
 
   const data = {
     clientId: formData.value.client,
@@ -115,7 +113,6 @@ async function onSubmit(event: FormSubmitEvent<unknown>) {
   try {
     await useTasksStore().addTask(data);
     formData.value = { ...initialFormData };
-    await useTasksStore().fetchUserTasks(user.value.uid);
     setTimeout(() => {
       statusMessage.value = { text: 'Task added successfully', variant: 'success' };
     }, 3000);

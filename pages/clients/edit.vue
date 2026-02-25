@@ -82,12 +82,9 @@ const parsedId = computed(() => {
   return id ? id.toString() : null;
 });
 
-const clients = computed(() => {
-  const clientList = clientsStore.clients;
-  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
-
-  return clientList
-});
+const clients = computed(() =>
+  clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || []
+);
 
 useAsyncData(
   'clients',

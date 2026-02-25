@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { addDoc, collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, deleteDoc, writeBatch } from 'firebase/firestore';
+import { collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
 import type { Task } from '~/types';
 import { useNuxtApp } from 'nuxt/app';
 
@@ -9,8 +9,12 @@ export const useTasksStore = defineStore('tasksStore', {
   }),
   actions: {
     async fetchTasks() {
-      // console.log('Fetching tasks, SSR:', process.server);
-      const db = (useNuxtApp().$firestore as Firestore);
+      const db = useNuxtApp().$firestore as Firestore | null;
+      if (!db) {
+        console.error('Firestore is not initialized');
+        this.tasks = [];
+        return;
+      }
       const tasksRef = collection(db, 'tasks');
       const snapshot = await getDocs(tasksRef);
       this.tasks = snapshot.docs.map((doc) => ({ ...doc.data() })) as Task[];
@@ -23,7 +27,7 @@ export const useTasksStore = defineStore('tasksStore', {
       }
 
       try {
-        const db = (useNuxtApp().$firestore as Firestore);
+        const db = useNuxtApp().$firestore as Firestore | null;
 
         if (!db) {
           console.error('Firestore instance is not initialized');
@@ -31,10 +35,8 @@ export const useTasksStore = defineStore('tasksStore', {
           return;
         }
 
-        // console.log('Firestore instance is initialized');
         const tasksRef = doc(db, 'tasks', task.id);
         await setDoc(tasksRef, task);
-        // console.log('Task was created');
         await this.fetchUserTasks(task.users[0]);
       } catch (error) {
         console.error('Error adding task:', error);
@@ -43,16 +45,23 @@ export const useTasksStore = defineStore('tasksStore', {
     },
 
     async getTasksCount() {
-      const db = (useNuxtApp().$firestore as Firestore);
+      const db = useNuxtApp().$firestore as Firestore | null;
+      if (!db) {
+        console.error('Firestore is not initialized');
+        return 0;
+      }
       const tasksRef = collection(db, 'tasks');
       const snapshot = await getCountFromServer(tasksRef);
-      const count = snapshot.data().count;
 
-      return count;
+      return snapshot.data().count;
     },
 
     async updateTask(id: string, task: Task) {
-      const db = (useNuxtApp().$firestore as Firestore);
+      const db = useNuxtApp().$firestore as Firestore | null;
+      if (!db) {
+        console.error('Firestore is not initialized');
+        return;
+      }
       const tasksRef = collection(db, 'tasks');
       const taskRef = doc(tasksRef, task.id);
       await updateDoc(taskRef, task);
@@ -65,7 +74,11 @@ export const useTasksStore = defineStore('tasksStore', {
     },
 
     async updateUserTask(id: string, task: Task, uid: string) {
-      const db = (useNuxtApp().$firestore as Firestore);
+      const db = useNuxtApp().$firestore as Firestore | null;
+      if (!db) {
+        console.error('Firestore is not initialized');
+        return;
+      }
       const tasksRef = collection(db, 'tasks');
       const taskRef = doc(tasksRef, task.id);
 
@@ -86,7 +99,7 @@ export const useTasksStore = defineStore('tasksStore', {
       }
 
       try {
-        const db = useNuxtApp().$firestore as Firestore | undefined;
+        const db = useNuxtApp().$firestore as Firestore | null;
 
         if (!db) {
           console.error('Firestore instance is not initialized');
@@ -94,7 +107,6 @@ export const useTasksStore = defineStore('tasksStore', {
           return;
         }
 
-        // console.log('Fetching tasks for UID:', uid);
         const tasksRef = collection(db, 'tasks');
         const q = query(tasksRef, where('users', 'array-contains', uid));
         const snapshot = await getDocs(q);
@@ -114,16 +126,13 @@ export const useTasksStore = defineStore('tasksStore', {
         return;
       }
 
-      // console.log('Removing tasks with IDs:', taskIds);
       try {
-        const db = useNuxtApp().$firestore as Firestore | undefined;
+        const db = useNuxtApp().$firestore as Firestore | null;
 
         if (!db) {
           console.error('Firestore instance is not initialized');
           return;
         }
-
-        // console.log('Firestore instance is initialized');
 
         const batch = writeBatch(db);
         const tasksRef = collection(db, 'tasks');
@@ -137,7 +146,6 @@ export const useTasksStore = defineStore('tasksStore', {
 
         this.tasks = this.tasks.filter(task => !taskIds.includes(task.id));
 
-        // console.log(`${taskIds.length} tasks removed successfully`);
         return true;
       } catch (error) {
         console.error('Error removing task:', error);

@@ -2,17 +2,29 @@
 
 ## Critical issues
 
-1. **Potential cross-user data leakage in analytics**  
+1. **Potential cross-user data leakage in analytics**
    `getTasksOfTheYear` queries all tasks by year and does not filter by current user, while other pages rely on user-scoped `fetchUserTasks`. This can expose other users' task data in charts and metrics if Firestore rules are permissive/misconfigured.
+   **STATUS: FIXED** — `where('users', 'array-contains', uid)` added, `uid` passed explicitly.
 
-2. **Incorrect previous-year logic on analytics page**  
+2. **Incorrect previous-year logic on analytics page**
    In `pages/index.vue`, the condition uses `tasksStore.tasks.values.length`, but `tasks` is an array and has no `values.length` property. This makes the branch logic incorrect and can break comparisons for “last period”.
+   **STATUS: FIXED** — uses `tasksStore.tasks.length` now.
 
-3. **Auth persistence model is unsafe/inconsistent**  
+3. **Auth persistence model is unsafe/inconsistent**
    The entire Firebase `User` object is persisted in Pinia storage (`persist: true`). Firebase User includes volatile/non-serializable internals and can become stale across reloads/tabs. This should be replaced with `onAuthStateChanged` hydration and a minimal serializable auth snapshot.
+   **STATUS: FIXED** — only `AuthUser` (uid, email, displayName, photoURL) is persisted via `persist: { pick: ['user'] }`.
 
-4. **Global auth middleware can produce false redirects/flicker**  
+4. **Global auth middleware can produce false redirects/flicker**
    `auth.global.ts` checks only `authStore.user` synchronously and redirects immediately. On first load (before auth rehydration), authenticated users can be redirected to `/login` incorrectly.
+   **STATUS: FIXED** — middleware waits for `isAuthResolved` via `watch` before redirecting.
+
+13. **`auth-state` plugin crashes when Firebase is not configured → app unusable** *(regression, added 2026-02-25)*
+   `plugins/auth-state.client.ts` calls `authStore.initializeAuth($auth as Auth)` without checking if `$auth` is `null`. When Firebase config is missing/incomplete, `plugins/firebase.ts` correctly sets `$auth = null`, but `stores/auth.ts:initializeAuth` then calls `onAuthStateChanged(null, ...)` which throws `Cannot read properties of undefined (reading 'onAuthStateChanged')`. This crashes the client plugin, `isAuthResolved` stays `false` forever, and all client-side route guards hang indefinitely.
+   **Fix:** guard at the top of `initializeAuth` (or in the plugin): `if (!auth) { this.setAuthResolved(true); return; }`.
+
+14. **Unauthenticated users see the main page on first load** *(regression, added 2026-02-25)*
+   `middleware/auth.global.ts` returns early on `import.meta.server` to avoid SSR deadlock — correct — but this means the SSR response is sent without any auth check. On the client, the middleware waits for `isAuthResolved`, which never resolves when `auth-state` plugin crashes (see issue 13). As a result, unauthenticated users see the full dashboard on first page load and no redirect to `/login` ever fires.
+   **Fix:** requires issue 13 to be resolved first so `isAuthResolved` is always set; additionally consider redirecting to `/login` server-side using a cookie/session signal to avoid the SSR gap.
 
 ## High-priority issues
 
@@ -49,6 +61,11 @@
 - Third-party `vue3-charts` bundle uses `eval`, flagged by Rollup security/perf warning.
 
 ## Fix plan
+
+### Phase 0 — App-breaking regressions (fix immediately)
+
+0a. Guard against null `$auth` in `plugins/auth-state.client.ts` or `stores/auth.ts:initializeAuth` — add `if (!auth) { this.setAuthResolved(true); return; }` so `isAuthResolved` is always resolved and the app does not crash when Firebase config is absent.
+0b. After 0a, verify that the global middleware correctly redirects unauthenticated users on first client load. Consider a lightweight server-side guard (cookie check) to close the SSR auth gap.
 
 ### Phase 1 — Security & auth correctness
 

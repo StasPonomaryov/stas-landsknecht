@@ -30,15 +30,15 @@
               <div class="flex lg:w-1/2 flex-col">
                 <UFormField label="Price start" name="priceStart" size="lg">
                   <UInputNumber class="w-full" v-model="formData.priceStart" :error="formErrors.priceStart"
-                    orientation="vertical" step="any" />
+                    orientation="vertical" :step="0.01" />
                 </UFormField>
                 <UFormField label="Price end" name="priceEnd" size="lg">
                   <UInputNumber class="w-full" v-model="formData.priceEnd" :error="formErrors.priceEnd"
-                    orientation="vertical" step="any" />
+                    orientation="vertical" :step="0.01" />
                 </UFormField>
                 <UFormField label="Hours spent" name="hours" size="lg">
                   <UInputNumber class="w-full" v-model="formData.hours" :error="formErrors.hours"
-                    orientation="vertical" step="0.25" />
+                    orientation="vertical" :step="0.25" />
                 </UFormField>
               </div>
               <div class="flex w-1/2 flex-col">
@@ -91,7 +91,7 @@ import { useTasksStore } from '~/stores/tasks';
 import { useClientsStore } from '~/stores/clients';
 import { useAuthStore } from '~/stores/auth';
 import { editTaskFormSchema, type EditTaskFormData, type EditTaskFormErrors } from '~/shared/utils/validators';
-import type { FormSubmitEvent, RadioGroupItem } from '@nuxt/ui';
+import type { RadioGroupItem } from '@nuxt/ui';
 import { STATUSES, type Task } from '~/types';
 import { convertStatusToNumber, convertStatusToText } from '~/shared/utils';
 
@@ -155,7 +155,7 @@ useAsyncData(
     try {
       await Promise.all([
         tasksStore.tasks.length ? Promise.resolve() : tasksStore.fetchUserTasks(user.value.uid),
-        clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchClients(),
+        clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchUserClients(user.value.uid),
       ]);
     } catch (error) {
       errorMessage.value = 'Failed to load data. Please try again.';
@@ -180,16 +180,14 @@ const validateFormData = (): boolean => {
   return true;
 };
 
-const onSubmit = async (event: FormSubmitEvent<unknown>) => {
+const onSubmit = async () => {
   errorMessage.value = null;
 
   if (!validateFormData() || !user.value) return;
-  // console.log('Form submitted:', event);
 
   const taskId = parsedId.value ?? selectedTask.value.value;
   const data = {
     clientId: formData.value.client,
-    ...(formData.value.dateStart && { end: formData.value.dateStart }),
     ...(formData.value.dateEnd && { end: formData.value.dateEnd }),
     hours: formData.value.hours || 0,
     id: taskId,

@@ -3,10 +3,21 @@ import { useNuxtApp } from '#app';
 import { useAuthStore } from '~/stores/auth';
 
 export const useFirebaseAuth = () => {
+  if (import.meta.server) {
+    return {
+      signInWithGitHub: async (): Promise<User | null> => null,
+      signOutUser: async () => {},
+      getCurrentUser: (): User | null => null,
+    };
+  }
+
   const { $auth } = useNuxtApp();
   const authStore = useAuthStore();
 
   const signInWithGitHub = async (): Promise<User | null> => {
+    if (!$auth) {
+      throw new Error('Firebase is not configured. Check your environment variables.');
+    }
     try {
       const provider = new GithubAuthProvider();
       const result = await signInWithPopup($auth as Auth, provider);
@@ -21,6 +32,11 @@ export const useFirebaseAuth = () => {
   };
 
   const signOutUser = async () => {
+    if (!$auth) {
+      authStore.clearUser();
+      authStore.setAuthResolved(true);
+      return;
+    }
     try {
       await signOut($auth as Auth);
       authStore.clearUser();
