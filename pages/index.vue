@@ -87,12 +87,21 @@ useAsyncData(
 );
 
 async function loadTasksOfYear(year: number) {
+  const uid = user.value?.uid;
+
+  if (!uid) {
+    thisYearTasks.value = [];
+    lastPeriodTasks.value = [];
+    return;
+  }
+
   const today = new Date();
   const currentMonth = today.getMonth();
-  const thisYear = await getTasksOfTheYear(year);
-  const lastYear = (tasksStore.tasks.values.length)
+  const thisYear = await getTasksOfTheYear(year, uid);
+  const lastYear = tasksStore.tasks.length
     ? dataTasksOfMonths(tasksStore.tasks, 1, currentMonth + 1)
-    : await getTasksOfTheYear(year - 1)
+    : await getTasksOfTheYear(year - 1, uid);
+
   thisYearTasks.value = thisYear;
   lastPeriodTasks.value = lastYear;
 }

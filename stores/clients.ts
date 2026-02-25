@@ -37,7 +37,6 @@ export const useClientsStore = defineStore('clientsStore', {
         await setDoc(clientsRef, client);
         // console.log('Client was created');
         await this.fetchUserClients(client.users[0]);
-        this.clients.push(client);
       } catch (error) {
         console.error('Error adding client:', error);
         throw error;

@@ -43,7 +43,7 @@ export const columns: ColumnDef<Client>[] = [
         ? getExcerpt(description)
         : '';
 
-      return h('div', { class: 'text-left font-medium]' }, excerpt)
+      return h('div', { class: 'text-left font-medium' }, excerpt)
     },
   },
   {
@@ -55,7 +55,7 @@ export const columns: ColumnDef<Client>[] = [
         ? getExcerpt(contacts)
         : '';
 
-      return h('div', { class: 'text-left font-medium]' }, excerpt)
+      return h('div', { class: 'text-left font-medium' }, excerpt)
     },
   },
 ]
