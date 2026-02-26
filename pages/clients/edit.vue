@@ -97,7 +97,7 @@ useAsyncData(
 
     try {
       await Promise.all([
-        clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchClients(),
+        clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchUserClients(user.value.uid),
       ]);
     } catch (error) {
       errorMessage.value = 'Failed to load data. Please try again.';

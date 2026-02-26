@@ -6,7 +6,7 @@
       <!-- <span title="Tasks count">📝: {{ tasksStore.tasks?.length || tasksLength }};</span> -->
       <span class="hidden md:block" title="User ID">👑: {{ user?.uid }}</span>
     </div>
-    <div class="build">1.0.2</div>
+    <div class="build">1.0.3</div>
   </footer>
 </template>
 

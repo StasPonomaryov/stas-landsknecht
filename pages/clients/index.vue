@@ -68,7 +68,7 @@ useAsyncData(
 
     try {
       await Promise.all([
-        clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchClients(),
+        clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchUserClients(user.value.uid),
       ]);
       errorMessage.value = null;
     } catch (error) {

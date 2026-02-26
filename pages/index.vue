@@ -2,7 +2,7 @@
   <section>
     <div class="text-center">
       <h2>Analytics</h2>
-      <div>All tasks: {{ tasks.length }}; this year: {{ thisYearTasks.length }}</div>
+      <div>This year: {{ thisYearTasks.length }}</div>
       <div class="flex gap-4 items-center justify-center my-4">
         <UInputMenu class="w-[100px]" v-model="targetYear"
           :items="allYears.map((y: string) => ({ value: y, label: y }))" value-key="value" />
@@ -53,16 +53,6 @@ const tasksByCount = ref<TasksChart[]>([]);
 const tasksByIncome = ref<TasksChart[]>([]);
 const clientsByCount = ref<TasksChart[]>([]);
 const clientsByIncome = ref<TasksChart[]>([]);
-const tasks = computed(() => {
-  const taskList = tasksStore.tasks;
-  // console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
-  return taskList;
-});
-const clients = computed(() => {
-  const clientList = clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || [];
-  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
-  return clientList;
-});
 
 useAsyncData(
   'tasks-and-clients',
@@ -75,8 +65,7 @@ useAsyncData(
 
     try {
       await Promise.all([
-        tasksStore.tasks.length ? Promise.resolve() : tasksStore.fetchUserTasks(user.value.uid),
-        clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchClients(),
+        clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchUserClients(user.value.uid),
       ]);
       errorMessage.value = null;
     } catch (error) {

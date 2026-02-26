@@ -37,7 +37,9 @@ export const useTasksStore = defineStore('tasksStore', {
 
         const tasksRef = doc(db, 'tasks', task.id);
         await setDoc(tasksRef, task);
-        await this.fetchUserTasks(task.users[0]);
+        this.tasks = [task, ...this.tasks].sort(
+          (a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()
+        );
       } catch (error) {
         console.error('Error adding task:', error);
         throw error;
@@ -73,7 +75,7 @@ export const useTasksStore = defineStore('tasksStore', {
       }
     },
 
-    async updateUserTask(id: string, task: Task, uid: string) {
+    async updateUserTask(id: string, task: Task) {
       const db = useNuxtApp().$firestore as Firestore | null;
       if (!db) {
         console.error('Firestore is not initialized');

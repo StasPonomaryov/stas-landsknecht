@@ -81,7 +81,7 @@ useAsyncData(
     try {
       await Promise.all([
         tasksStore.tasks.length ? Promise.resolve() : tasksStore.fetchUserTasks(user.value.uid),
-        clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchClients(),
+        clientsStore.clients.length ? Promise.resolve() : clientsStore.fetchUserClients(user.value.uid),
       ]);
       errorMessage.value = null;
     } catch (error) {
