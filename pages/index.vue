@@ -2,12 +2,12 @@
   <section>
     <div class="text-center">
       <h2>Analytics</h2>
-      <div>This year: {{ thisYearTasks.length }}</div>
+      <div>This year tasks: {{ thisYearTasks.length }}</div>
       <div class="flex gap-4 items-center justify-center my-4">
         <UInputMenu class="w-[100px]" v-model="targetYear"
           :items="allYears.map((y: string) => ({ value: y, label: y }))" value-key="value" />
         <div>
-          <b>This year income:</b>
+          <b>This year income: </b>
           <span class="big">{{ thisYearIncome.toFixed(2) }}</span>
           ({{ lastYearIncome < thisYearIncome ? `+${(thisYearIncome - lastYearIncome).toFixed(2)}` : `${(thisYearIncome
             - lastYearIncome).toFixed(2)}` }}) </div>
@@ -55,7 +55,7 @@ const clientsByCount = ref<TasksChart[]>([]);
 const clientsByIncome = ref<TasksChart[]>([]);
 
 useAsyncData(
-  'tasks-and-clients',
+  'analytics-clients',
   async () => {
     if (!user.value || !user.value.uid) {
       errorMessage.value = 'User not authenticated.';
