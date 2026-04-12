@@ -85,8 +85,6 @@ export const dataClientsOrdersIncome = (tasks: Task[], selectedYear: number) => 
     return [];
   }
 
-  // console.log('Tasks', tasks);
-
   const data: TasksChart[] = [];
 
   labelsMonths.forEach((month, index) => {

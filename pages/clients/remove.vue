@@ -77,11 +77,9 @@ defineShortcuts({
 const user = computed(() => {
   return authStore.user;
 });
-const clients = computed(() => {
-  const clientList = clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || [];
-  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
-  return clientList;
-});
+const clients = computed(() =>
+  clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || []
+);
 
 useAsyncData(
   'clients',
@@ -107,7 +105,6 @@ useAsyncData(
 );
 
 const onClientSelect = (value: string) => {
-  // console.log('Client selected via @update:modelValue:', value);
   selectedClient.value = {
     label: clientsStore.clients.find((client) => client.id === value)?.name || '',
     value,

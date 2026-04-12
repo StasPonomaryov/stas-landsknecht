@@ -76,7 +76,6 @@ const selectedClient = ref<{ label: string; value: string }>({ label: '', value:
 
 const parsedId = computed(() => {
   const id = route.query.id;
-  // console.log('Parsed ID, SSR:', process.server, 'ID:', id);
   if (id) isLoading.value = false;
 
   return id ? id.toString() : null;
@@ -111,7 +110,6 @@ useAsyncData(
 
 async function onSubmit(event: FormSubmitEvent<unknown>) {
   statusMessage.value = null;
-  // console.log(event);
 
   if (!validateFormData() || !user.value) return;
 
@@ -123,15 +121,12 @@ async function onSubmit(event: FormSubmitEvent<unknown>) {
     name: formData.value.name,
     users: [user.value.uid],
   };
-  // console.log('Client, data:', clientId, data);
-
   try {
     await useClientsStore().updateClient(clientId, data);
     formData.value = { ...initialFormData };
     await useClientsStore().fetchUserClients(user.value.uid);
-    setTimeout(() => {
-      statusMessage.value = { text: 'Client edited successfully', variant: 'success' };
-    }, 3000);
+    statusMessage.value = { text: 'Client edited successfully', variant: 'success' };
+    setTimeout(() => { statusMessage.value = null; }, 3000);
   } catch (error) {
     console.error(error);
     statusMessage.value = { text: 'Error editing client', variant: 'error' };
@@ -158,7 +153,6 @@ if (user.value && !clientsStore.clients.length) {
   clientsStore.fetchUserClients(user.value.uid);
 };
 const onClientSelect = (value: string) => {
-  // console.log('Client selected via @update:modelValue:', value);
   selectedClient.value = {
     label: clientsStore.clients.find((client) => client.id === value)?.name || '',
     value,
@@ -167,7 +161,6 @@ const onClientSelect = (value: string) => {
 };
 
 const updateFormData = (clientId: string) => {
-  // console.log('Updating form data for client:', clientId);
   const client = clientsStore.clients.find((t) => t.id === clientId);
   if (!client) {
     errorMessage.value = 'Client not found.';
@@ -181,13 +174,11 @@ const updateFormData = (clientId: string) => {
   };
 
   router.replace({ query: { id: client.id } });
-  // console.log('Form data updated:', formData.value);
 };
 
 watch(
   () => selectedClient.value.value,
   (newValue) => {
-    // console.log('Watch triggered, selectedClient.value:', newValue);
     if (newValue) {
       updateFormData(newValue);
     }

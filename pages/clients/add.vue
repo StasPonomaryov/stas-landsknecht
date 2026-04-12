@@ -48,7 +48,6 @@ const statusMessage = ref<{ text: string, variant: "success" | "error" } | null>
 
 async function onSubmit(event: FormSubmitEvent<unknown>) {
   statusMessage.value = null;
-  // console.log(event);
 
   if (!validateFormData() || !user.value) return;
 
@@ -64,9 +63,8 @@ async function onSubmit(event: FormSubmitEvent<unknown>) {
     await useClientsStore().addClient(data);
     formData.value = { ...initialFormData };
     await useClientsStore().fetchUserClients(user.value.uid);
-    setTimeout(() => {
-      statusMessage.value = { text: 'Client added successfully', variant: 'success' };
-    }, 3000);
+    statusMessage.value = { text: 'Client added successfully', variant: 'success' };
+    setTimeout(() => { statusMessage.value = null; }, 3000);
   } catch (error) {
     console.error(error);
     statusMessage.value = { text: 'Error adding client', variant: 'error' };

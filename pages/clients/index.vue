@@ -50,12 +50,7 @@ const succeed = ref(false);
 const selectedClient = ref<{ label: string; value: string }>({ label: '', value: '' });
 const clientsToRemove = ref<Client[] | null>(null);
 
-const clients = computed(() => {
-  const clientList = clientsStore.clients;
-  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
-
-  return clientList
-});
+const clients = computed(() => clientsStore.clients);
 
 useAsyncData(
   'clients',

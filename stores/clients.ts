@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { collection, deleteDoc, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { collection, deleteDoc, doc, Firestore, getDocs, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
 import type { Client } from '~/types';
 import { useNuxtApp } from 'nuxt/app';
 
@@ -9,18 +9,6 @@ export const useClientsStore = defineStore('clientsStore', {
     isLoading: false,
   }),
   actions: {
-    async fetchClients() {
-      const db = useNuxtApp().$firestore as Firestore | null;
-      if (!db) {
-        console.error('Firestore is not initialized');
-        this.clients = [];
-        return;
-      }
-      const clientsRef = collection(db, 'clients');
-      const snapshot = await getDocs(clientsRef);
-      this.clients = snapshot.docs.map((doc) => ({ ...doc.data() })) as Client[];
-    },
-
     async addClient(client: Client) {
       if (!client.id) {
         console.error('Invalid client ID');
@@ -55,10 +43,7 @@ export const useClientsStore = defineStore('clientsStore', {
       const clientRef = doc(clientsRef, client.id);
       await updateDoc(clientRef, client);
 
-      const index = this.clients.findIndex((client) => client.id === id)
-      if (index !== -1) {
-        this.clients[index] = { ...this.clients[index], ...client }
-      }
+      this.clients = this.clients.map((c) => c.id === id ? { ...c, ...client } : c);
     },
 
     async deleteClient(id: string) {
@@ -72,18 +57,6 @@ export const useClientsStore = defineStore('clientsStore', {
       await deleteDoc(clientRef);
 
       this.clients = this.clients.filter((c) => c.id !== id);
-    },
-
-    async getClientsCount() {
-      const db = useNuxtApp().$firestore as Firestore | null;
-      if (!db) {
-        console.error('Firestore is not initialized');
-        return 0;
-      }
-      const clientsRef = collection(db, 'clients');
-      const snapshot = await getCountFromServer(clientsRef);
-
-      return snapshot.data().count;
     },
 
     async fetchUserClients(uid?: string) {

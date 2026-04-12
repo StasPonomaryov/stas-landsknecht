@@ -19,7 +19,6 @@ const checkAuth = async () => {
   try {
     const { getCurrentUser } = useFirebaseAuth();
     const user = await getCurrentUser();
-    // console.log('User in confirmation:', user);
 
     if (user) {
       await router.push('/');

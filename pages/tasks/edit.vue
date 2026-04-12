@@ -100,10 +100,7 @@ const tasksStore = useTasksStore();
 const clientsStore = useClientsStore();
 const router = useRouter();
 const route = useRoute();
-const user = computed(() => {
-  // console.log('User computed, SSR:', process.server, 'User:', authStore.user);
-  return authStore.user;
-});
+const user = computed(() => authStore.user);
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
 const statusMessage = ref<{ text: string, variant: "success" | "error" } | null>(null);
@@ -124,20 +121,15 @@ const formData = ref<EditTaskFormData>({ ...initialFormData });
 const formErrors = ref<EditTaskFormErrors>({});
 const statuses = ref<RadioGroupItem[]>(STATUSES);
 
-const tasks = computed(() => {
-  const taskList = tasksStore.tasks?.map((task) => ({ label: task.title, value: task.id })) || [];
-  // console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
-  return taskList;
-});
-const clients = computed(() => {
-  const clientList = clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || [];
-  // console.log('Clients computed, SSR:', process.server, 'Clients:', clientList);
-  return clientList;
-});
+const tasks = computed(() =>
+  tasksStore.tasks?.map((task) => ({ label: task.title, value: task.id })) || []
+);
+const clients = computed(() =>
+  clientsStore.clients?.map((client) => ({ label: client.name, value: client.id })) || []
+);
 
 const parsedId = computed(() => {
   const id = route.query.id;
-  // console.log('Parsed ID, SSR:', process.server, 'ID:', id);
   if (id) isLoading.value = false;
 
   return id ? id.toString() : null;
@@ -204,9 +196,8 @@ const onSubmit = async () => {
     await useTasksStore().updateTask(taskId, data);
     formData.value = { ...initialFormData };
     await useTasksStore().fetchUserTasks(user.value?.uid);
-    setTimeout(() => {
-      statusMessage.value = { text: 'Task edited successfully', variant: 'success' };
-    }, 3000);
+    statusMessage.value = { text: 'Task edited successfully', variant: 'success' };
+    setTimeout(() => { statusMessage.value = null; }, 3000);
   } catch (error) {
     console.error(error);
     statusMessage.value = { text: 'Error editing task', variant: 'error' };
@@ -214,7 +205,6 @@ const onSubmit = async () => {
 };
 
 const onTaskSelect = (value: string) => {
-  // console.log('Task selected via @update:modelValue:', value);
   selectedTask.value = {
     label: tasksStore.tasks.find((task) => task.id === value)?.title || '',
     value,
@@ -223,7 +213,6 @@ const onTaskSelect = (value: string) => {
 };
 
 const updateFormData = (taskId: string) => {
-  // console.log('Updating form data for task:', taskId);
   const task = tasksStore.tasks.find((t) => t.id === taskId);
   if (!task) {
     errorMessage.value = 'Task not found.';
@@ -243,13 +232,11 @@ const updateFormData = (taskId: string) => {
   };
 
   router.replace({ query: { id: task.id } });
-  // console.log('Form data updated:', formData.value);
 };
 
 watch(
   () => selectedTask.value.value,
   (newValue) => {
-    // console.log('Watch triggered, selectedTask.value:', newValue);
     if (newValue) {
       updateFormData(newValue);
     }

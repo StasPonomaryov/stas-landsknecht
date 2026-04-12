@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { collection, doc, Firestore, getDocs, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
 import type { Task } from '~/types';
 import { useNuxtApp } from 'nuxt/app';
 
@@ -8,18 +8,6 @@ export const useTasksStore = defineStore('tasksStore', {
     tasks: [] as Task[]
   }),
   actions: {
-    async fetchTasks() {
-      const db = useNuxtApp().$firestore as Firestore | null;
-      if (!db) {
-        console.error('Firestore is not initialized');
-        this.tasks = [];
-        return;
-      }
-      const tasksRef = collection(db, 'tasks');
-      const snapshot = await getDocs(tasksRef);
-      this.tasks = snapshot.docs.map((doc) => ({ ...doc.data() })) as Task[];
-    },
-
     async addTask(task: Task) {
       if (!task.id) {
         console.error('Invalid task ID');
@@ -46,18 +34,6 @@ export const useTasksStore = defineStore('tasksStore', {
       }
     },
 
-    async getTasksCount() {
-      const db = useNuxtApp().$firestore as Firestore | null;
-      if (!db) {
-        console.error('Firestore is not initialized');
-        return 0;
-      }
-      const tasksRef = collection(db, 'tasks');
-      const snapshot = await getCountFromServer(tasksRef);
-
-      return snapshot.data().count;
-    },
-
     async updateTask(id: string, task: Task) {
       const db = useNuxtApp().$firestore as Firestore | null;
       if (!db) {
@@ -68,11 +44,7 @@ export const useTasksStore = defineStore('tasksStore', {
       const taskRef = doc(tasksRef, task.id);
       await updateDoc(taskRef, task);
 
-      const index = this.tasks.findIndex((task) => task.id === id)
-
-      if (index !== -1) {
-        this.tasks[index] = { ...this.tasks[index], ...task }
-      }
+      this.tasks = this.tasks.map((t) => t.id === id ? { ...t, ...task } : t);
     },
 
     async updateUserTask(id: string, task: Task) {
@@ -86,11 +58,7 @@ export const useTasksStore = defineStore('tasksStore', {
 
       await setDoc(taskRef, { users: task.users }, { merge: true });
 
-      const index = this.tasks.findIndex((task) => task.id === id);
-
-      if (index !== -1) {
-        this.tasks[index] = { ...this.tasks[index], ...task };
-      }
+      this.tasks = this.tasks.map((t) => t.id === id ? { ...t, ...task } : t);
     },
 
     async fetchUserTasks(uid?: string) {

@@ -58,10 +58,7 @@ defineShortcuts({
 });
 
 const tasks = computed(() => {
-  const taskList = tasksStore.tasks;
-  // console.log('Tasks computed, SSR:', process.server, 'Tasks:', taskList);
-
-  const tasksWithClients = taskList.map((task) => {
+  const tasksWithClients = tasksStore.tasks.map((task) => {
     const client = clientsStore.clients.find((client) => client.id === task.clientId);
     return { ...task, clientName: client?.name || '' };
   });
