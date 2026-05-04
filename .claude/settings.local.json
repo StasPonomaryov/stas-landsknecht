@@ -10,7 +10,15 @@
       "Bash(find d:/git/projects/stas-landsknecht/node_modules/.pnpm/pinia@* -name \"*.d.ts\")",
       "Bash(pnpm nuxt prepare)",
       "Bash(pnpm exec nuxi typecheck)",
-      "Bash(pnpm typecheck)"
+      "Bash(pnpm typecheck)",
+      "Read(//c/Users/stas/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(python scripts/search.py \"freelance task manager productivity SaaS minimal professional\" --design-system -p \"Landsknecht\" -f markdown)",
+      "Bash(python \"C:\\\\Users\\\\stas\\\\.claude\\\\plugins\\\\cache\\\\ui-ux-pro-max-skill\\\\ui-ux-pro-max\\\\2.5.0\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"freelance task manager productivity SaaS minimal professional\" --design-system -p \"Landsknecht\" -f markdown)",
+      "Bash(Get-ChildItem \"C:\\\\Users\\\\stas\\\\.claude\\\\plugins\\\\cache\\\\ui-ux-pro-max-skill\\\\ui-ux-pro-max\\\\2.5.0\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\" -Recurse)",
+      "Bash(Select-Object FullName)",
+      "Bash(python \"C:\\\\Users\\\\stas\\\\.claude\\\\plugins\\\\cache\\\\ui-ux-pro-max-skill\\\\ui-ux-pro-max\\\\src\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"freelance task manager productivity SaaS minimal professional\" --design-system -p \"Landsknecht\" -f markdown)",
+      "Read(//c/Users/stas/.claude/plugins/cache/ui-ux-pro-max-skill/**)",
+      "Bash(python \"C:\\\\Users\\\\stas\\\\.claude\\\\plugins\\\\cache\\\\ui-ux-pro-max-skill\\\\ui-ux-pro-max\\\\2.5.0\\\\src\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"freelance task manager productivity SaaS minimal professional\" --design-system -p \"Landsknecht\" -f markdown)"
     ]
   }
 }

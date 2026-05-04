@@ -1,23 +1,36 @@
 <template>
   <section>
-    <div class="flex flex-wrap gap-4 items-center justify-between mb-6">
-      <div class="flex flex-wrap gap-4 items-center">
-        <UInputMenu class="w-[100px]" v-model="targetYear"
-          :items="allYears.map((y: string) => ({ value: y, label: y }))" value-key="value" />
-        <div>
-          <b>This year income: </b>
-          <span style="color: var(--primary-color); font-size: 1.25rem; font-weight: bold">{{ thisYearIncome.toFixed(2) }}</span>
-          <span class="text-sm ml-2 opacity-60">
-            ({{ lastYearIncome < thisYearIncome
-              ? `+${(thisYearIncome - lastYearIncome).toFixed(2)}`
-              : `${(thisYearIncome - lastYearIncome).toFixed(2)}` }})
-          </span>
+    <div class="page-header card mb-6">
+      <div class="page-header-left">
+        <div class="page-title-row">
+          <h1 class="page-title">Dashboard</h1>
+          <UInputMenu class="year-picker" v-model="targetYear"
+            :items="allYears.map((y: string) => ({ value: y, label: y }))" value-key="value" />
         </div>
-        <div class="text-sm opacity-50">{{ thisYearTasks.length }} tasks</div>
+        <div class="page-stats-row">
+          <div class="stat-chip">
+            <span class="stat-chip-label">This year</span>
+            <span class="stat-chip-value" style="color: var(--primary-color)">{{ thisYearIncome.toFixed(0) }}</span>
+            <span class="stat-chip-delta" :class="thisYearIncome >= lastYearIncome ? 'positive' : 'negative'">
+              {{ thisYearIncome >= lastYearIncome ? '↑' : '↓' }}
+              {{ Math.abs(thisYearIncome - lastYearIncome).toFixed(0) }} vs prev year
+            </span>
+          </div>
+          <div class="stat-chip">
+            <span class="stat-chip-label">Tasks</span>
+            <span class="stat-chip-value">{{ thisYearTasks.length }}</span>
+          </div>
+        </div>
       </div>
-      <div class="flex gap-2">
-        <NuxtLink to="/tasks/add" class="btn btn-primary">+ Task</NuxtLink>
-        <NuxtLink to="/clients/add" class="btn btn-primary">+ Client</NuxtLink>
+      <div class="page-header-actions">
+        <NuxtLink to="/tasks/add" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Task
+        </NuxtLink>
+        <NuxtLink to="/clients/add" class="btn btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Client
+        </NuxtLink>
       </div>
     </div>
 
@@ -171,4 +184,65 @@ watch(thisYearTasks, (newTasks) => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.page-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.page-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.page-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+}
+.year-picker {
+  width: 90px;
+}
+.page-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+.stat-chip {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+.stat-chip-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  opacity: 0.45;
+}
+.stat-chip-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.stat-chip-delta {
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+.stat-chip-delta.positive { color: var(--primary-color); opacity: 1; }
+.stat-chip-delta.negative { color: #ef4444; opacity: 1; }
+.page-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+</style>

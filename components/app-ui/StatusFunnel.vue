@@ -2,23 +2,31 @@
   <div class="card">
     <h3>Task status</h3>
     <div v-if="data.total === 0" class="text-sm opacity-50">No tasks yet</div>
-    <div v-else class="flex flex-col gap-4 mt-1">
-      <div v-for="item in statuses" :key="item.label">
-        <div class="funnel-row">
-          <span class="funnel-dot" :style="{ backgroundColor: item.color }"></span>
-          <span class="funnel-label">{{ item.label }}</span>
-          <span class="funnel-count">{{ item.count }}</span>
-          <span class="funnel-pct">{{ item.pct }}%</span>
+    <div v-else class="flex flex-col gap-3 mt-1">
+      <div v-for="item in statuses" :key="item.label" class="status-item">
+        <div class="status-meta">
+          <div class="status-dot-label">
+            <span class="status-dot" :style="{ backgroundColor: item.color }"></span>
+            <span class="status-label">{{ item.label }}</span>
+          </div>
+          <div class="status-numbers">
+            <span class="status-count">{{ item.count }}</span>
+            <span class="status-pct">{{ item.pct }}%</span>
+          </div>
         </div>
         <div class="progress-track">
           <div class="progress-fill" :style="{ width: item.pct + '%', backgroundColor: item.color }"></div>
         </div>
       </div>
-      <div class="stacked-bar">
-        <div v-for="item in statuses" :key="item.label"
-          :style="{ width: item.pct + '%', backgroundColor: item.color }"
-          :title="`${item.label}: ${item.count}`">
+
+      <div class="stacked-section">
+        <div class="stacked-bar">
+          <div v-for="item in statuses" :key="item.label"
+            :style="{ width: item.pct + '%', backgroundColor: item.color }"
+            :title="`${item.label}: ${item.count} (${item.pct}%)`">
+          </div>
         </div>
+        <div class="stacked-total">{{ data.total }} total</div>
       </div>
     </div>
   </div>
@@ -47,30 +55,77 @@ const statuses = computed(() => {
 </script>
 
 <style scoped>
-.funnel-row {
+.status-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.status-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.status-dot-label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.35rem;
-  font-size: 0.875rem;
+  gap: 0.4rem;
 }
-.funnel-dot {
-  width: 8px;
-  height: 8px;
+.status-dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-.funnel-label { flex: 1; }
-.funnel-count { font-weight: 700; }
-.funnel-pct { font-size: 0.75rem; opacity: 0.5; min-width: 2.5rem; text-align: right; }
-.progress-track { width: 100%; height: 4px; border-radius: 2px; background-color: rgba(var(--divider-color)); }
-.progress-fill { height: 4px; border-radius: 2px; transition: width 0.4s ease; }
+.status-label {
+  font-size: 0.8rem;
+}
+.status-numbers {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+.status-count {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.status-pct {
+  font-size: 0.65rem;
+  opacity: 0.45;
+  min-width: 2rem;
+  text-align: right;
+}
+.progress-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background-color: rgba(var(--divider-color));
+}
+.progress-fill {
+  height: 4px;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+  min-width: 2px;
+}
+.stacked-section {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
 .stacked-bar {
   display: flex;
-  height: 8px;
-  border-radius: 4px;
+  height: 6px;
+  border-radius: 3px;
   overflow: hidden;
-  margin-top: 0.5rem;
+  gap: 1px;
 }
-.stacked-bar > div { transition: width 0.4s ease; }
+.stacked-bar > div {
+  transition: width 0.5s ease;
+  min-width: 2px;
+}
+.stacked-total {
+  font-size: 0.65rem;
+  opacity: 0.4;
+  text-align: right;
+}
 </style>

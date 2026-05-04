@@ -78,7 +78,31 @@ body {
   color: var(--main-text-color);
   font-family: 'JetBrainsMono', monospace;
   font-size: 16px;
-  line-height: 1.35;
+  line-height: 1.5;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(var(--divider-color));
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 8px rgba(0, 0, 0, 0.04);
+}
+
+.card h3 {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.5;
+  margin-bottom: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    background-color: var(--main-bg-darker);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  }
 }
 
 h1 {
@@ -93,8 +117,8 @@ h2 {
 }
 
 h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
 }
 
 a {
@@ -115,28 +139,44 @@ p {
 }
 
 .btn {
-  border-radius: 6px;
+  border-radius: 8px;
   border-width: 1px;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  line-height: 1.5;
 }
 
 .btn.btn-sm {
-  padding: 1rem 1.5rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
 }
 
 .btn.btn-primary {
-  /* background: linear-gradient(var(--primary-color), var(--accent-color));
-  border-color: transparent;
-  box-shadow: inset 0px 0px 14px -3px var(--primary-color); */
   background-color: var(--primary-color);
   border-color: transparent;
   color: #fff;
-  /* text-shadow: 0px -1px var(--accent-color); */
+  box-shadow: 0 1px 3px rgba(80, 200, 120, 0.3);
 }
 
 .btn.btn-primary:hover {
-  background: none var(--accent-color);
-  cursor: pointer;
+  background-color: var(--accent-color);
+  box-shadow: 0 2px 8px rgba(56, 140, 104, 0.35);
+}
+
+.btn.btn-secondary {
+  background-color: transparent;
+  border-color: rgba(var(--divider-color));
+  color: var(--main-text-color);
+}
+
+.btn.btn-secondary:hover {
+  background-color: rgba(var(--divider-color), 0.5);
 }
 
 .site-wrapper {

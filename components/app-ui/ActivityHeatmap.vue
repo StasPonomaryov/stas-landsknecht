@@ -113,8 +113,8 @@ const getCellClass = (day: DayCell): string => {
 }
 .month-spacer { height: 14px; }
 .day-label {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   font-size: 8px;
   opacity: 0.45;
   display: flex;
@@ -128,7 +128,7 @@ const getCellClass = (day: DayCell): string => {
 .week-col {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 .month-label {
   height: 14px;
@@ -138,17 +138,21 @@ const getCellClass = (day: DayCell): string => {
   line-height: 14px;
 }
 .heat-cell {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 2px;
   cursor: default;
+  transition: opacity 150ms ease;
+}
+.heat-cell:hover {
+  opacity: 0.75;
 }
 .heat-empty { background-color: transparent; }
-.heat-0 { background-color: var(--main-bg-darker); }
-.heat-1 { background-color: #c6e48b; }
-.heat-2 { background-color: #7bc96f; }
-.heat-3 { background-color: #239a3b; }
-.heat-4 { background-color: #196127; }
+.heat-0 { background-color: rgba(var(--divider-color)); }
+.heat-1 { background-color: rgba(80, 200, 120, 0.2); }
+.heat-2 { background-color: rgba(80, 200, 120, 0.45); }
+.heat-3 { background-color: rgba(80, 200, 120, 0.7); }
+.heat-4 { background-color: var(--primary-color); }
 .legend {
   display: flex;
   align-items: center;
@@ -156,9 +160,5 @@ const getCellClass = (day: DayCell): string => {
   margin-top: 0.75rem;
   justify-content: flex-end;
 }
-.legend-label { font-size: 0.7rem; opacity: 0.5; }
-
-@media (prefers-color-scheme: dark) {
-  .heat-0 { background-color: rgba(var(--divider-color)); }
-}
+.legend-label { font-size: 0.65rem; opacity: 0.45; }
 </style>
