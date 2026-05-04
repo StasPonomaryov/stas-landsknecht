@@ -91,7 +91,7 @@ async function loadTasksOfYear(year: number) {
   const currentMonth = today.getMonth();
   const thisYear = await getTasksOfTheYear(year, uid);
   const lastYear = tasksStore.tasks.length
-    ? dataTasksOfMonths(tasksStore.tasks, 1, currentMonth + 1)
+    ? dataTasksOfMonths(tasksStore.tasks.filter(t => new Date(t.start).getFullYear() === year - 1), 1, currentMonth + 1)
     : await getTasksOfTheYear(year - 1, uid);
 
   thisYearTasks.value = thisYear;
