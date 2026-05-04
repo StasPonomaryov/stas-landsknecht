@@ -1,7 +1,7 @@
 import { collection, query, where, getDocs, getFirestore, Firestore } from "firebase/firestore";
 import { useNuxtApp } from 'nuxt/app';
 import { useClientsStore } from "~/stores/clients";
-import type { Task, TasksChart } from "~/types";
+import type { Task, TasksChart, Client } from "~/types";
 
 export const labelsMonths = [
   'Jan',
@@ -148,6 +148,71 @@ export const dataClientsByOrdersCount = (tasks: Task[]) => {
   }
 
   return data;
+};
+
+export const computeKpiData = (tasks: Task[]) => {
+  const totalIncome = tasks.reduce((acc, t) => acc + (Number(t.priceStart) || 0) + (Number(t.priceEnd) || 0), 0);
+  const activeTasks = tasks.filter(t => t.status === 2).length;
+  const tasksWithPrice = tasks.filter(t => Number(t.priceStart) > 0 || Number(t.priceEnd) > 0);
+  const avgTaskValue = tasksWithPrice.length > 0 ? totalIncome / tasksWithPrice.length : 0;
+  const nonCancelled = tasks.filter(t => t.status !== 0);
+  const completionRate = nonCancelled.length > 0
+    ? Math.round((tasks.filter(t => t.status === 1).length / nonCancelled.length) * 100)
+    : 0;
+  const pendingPaymentCount = tasks.filter(t => t.status === 1 && (!t.priceEnd || Number(t.priceEnd) === 0)).length;
+  return { totalIncome, activeTasks, avgTaskValue, completionRate, pendingPaymentCount };
+};
+
+export const computeMonthComparison = (tasks: Task[], selectedYear: number) => {
+  const today = new Date();
+  const cm = today.getMonth() + 1;
+  const lm = cm === 1 ? 12 : cm - 1;
+  const lmYear = cm === 1 ? selectedYear - 1 : selectedYear;
+  const cmStr = String(cm).padStart(2, '0');
+  const lmStr = String(lm).padStart(2, '0');
+  const thisMonthTasks = tasks.filter(t => t.start.startsWith(`${selectedYear}-${cmStr}`));
+  const lastMonthTasks = tasks.filter(t => t.start.startsWith(`${lmYear}-${lmStr}`));
+  const calcIncome = (ts: Task[]) => ts.reduce((a, t) => a + (Number(t.priceStart) || 0) + (Number(t.priceEnd) || 0), 0);
+  return {
+    thisMonth: { count: thisMonthTasks.length, income: calcIncome(thisMonthTasks) },
+    lastMonth: { count: lastMonthTasks.length, income: calcIncome(lastMonthTasks) },
+  };
+};
+
+export const computeStatusFunnel = (tasks: Task[]) => ({
+  processing: tasks.filter(t => t.status === 2).length,
+  done: tasks.filter(t => t.status === 1).length,
+  cancelled: tasks.filter(t => t.status === 0).length,
+  total: tasks.length,
+});
+
+export const computeActivityHeatmap = (tasks: Task[]): Record<string, number> => {
+  const counts: Record<string, number> = {};
+  tasks.forEach(t => {
+    if (t.start) counts[t.start] = (counts[t.start] || 0) + 1;
+    if (t.end) counts[t.end] = (counts[t.end] || 0) + 1;
+  });
+  return counts;
+};
+
+export const computeProductiveDays = (tasks: Task[]) => {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const counts = new Array(7).fill(0);
+  tasks.forEach(t => { if (t.start) counts[new Date(t.start).getDay()]++; });
+  return days.map((day, i) => ({ day, count: counts[i] }));
+};
+
+export const computeNeedsAttention = (tasks: Task[], clients: Client[]) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const overdue = tasks.filter(t => {
+    if (!t.end || t.status === 1 || t.status === 0) return false;
+    return new Date(t.end) < today;
+  });
+  const unpaidDone = tasks.filter(t => t.status === 1 && (!t.priceEnd || Number(t.priceEnd) === 0));
+  const activeClientIds = new Set(tasks.map(t => t.clientId));
+  const inactiveClients = clients.filter(c => !activeClientIds.has(c.id));
+  return { overdue, unpaidDone, inactiveClients };
 };
 
 export const dataClientsByOrdersIncome = (tasks: Task[]) => {
